@@ -1,6 +1,5 @@
 # Contact Service
 
-![](https://img.shields.io/docker/build/klyman/contact-service.svg)
 ![](https://img.shields.io/docker/pulls/klyman/contact-service.svg)
 ![](https://img.shields.io/docker/stars/klyman/contact-service.svg)
 
