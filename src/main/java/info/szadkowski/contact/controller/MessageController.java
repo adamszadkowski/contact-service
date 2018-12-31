@@ -1,6 +1,5 @@
 package info.szadkowski.contact.controller;
 
-import info.szadkowski.contact.properties.MailAddressesProperties;
 import info.szadkowski.contact.service.mail.MailContent;
 import info.szadkowski.contact.service.mail.MailSenderService;
 import info.szadkowski.contact.throttle.Throttler;
@@ -18,16 +17,13 @@ import java.util.Map;
 @RequestMapping(path = "/v1")
 public class MessageController {
   private final MailSenderService mailSenderService;
-  private final MailAddressesProperties mailAddressesProperties;
   private final Throttler ipThrottler;
   private final Throttler allThrottler;
 
   public MessageController(MailSenderService mailSenderService,
-                           MailAddressesProperties mailAddressesProperties,
                            Throttler ipThrottler,
                            Throttler allThrottler) {
     this.mailSenderService = mailSenderService;
-    this.mailAddressesProperties = mailAddressesProperties;
     this.ipThrottler = ipThrottler;
     this.allThrottler = allThrottler;
   }
@@ -38,8 +34,6 @@ public class MessageController {
     if (ipThrottler.canProcess(request.getRemoteAddr()) && allThrottler.canProcess("all")) {
       mailSenderService.send(MailContent.builder()
               .subject(message.get("subject"))
-              .sender(mailAddressesProperties.getSenderMail())
-              .recipient(mailAddressesProperties.getRecipientMail())
               .content(message.get("content"))
               .build());
 
