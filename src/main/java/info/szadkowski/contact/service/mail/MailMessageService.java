@@ -1,6 +1,6 @@
 package info.szadkowski.contact.service.mail;
 
-import info.szadkowski.contact.model.MessageContent;
+import info.szadkowski.contact.model.MessageRequest;
 import info.szadkowski.contact.properties.MailAddressesProperties;
 import info.szadkowski.contact.service.MessageService;
 import org.springframework.mail.javamail.JavaMailSender;
@@ -22,15 +22,15 @@ public class MailMessageService implements MessageService {
   }
 
   @Override
-  public void send(MessageContent content) {
+  public void send(MessageRequest message) {
     MimeMessage mimeMessage = javaMailSender.createMimeMessage();
 
     MimeMessageHelper helper = new MimeMessageHelper(mimeMessage);
     try {
-      helper.setSubject(content.getSubject());
+      helper.setSubject(message.getSubject());
       helper.setFrom(mailAddressesProperties.getSenderMail());
       helper.setTo(mailAddressesProperties.getRecipientMail());
-      helper.setText(content.getContent());
+      helper.setText(message.getContent());
     } catch (MessagingException e) {
       LOG.error("Cannot create a MimeMessage", e);
     }

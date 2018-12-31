@@ -1,7 +1,7 @@
 package info.szadkowski.contact.service;
 
-import info.szadkowski.contact.model.MessageContent;
+import info.szadkowski.contact.model.MessageRequest;
 
 public interface MessageService {
-  void send(MessageContent content);
+  void send(MessageRequest content);
 }

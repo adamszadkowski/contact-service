@@ -2,7 +2,7 @@ package info.szadkowski.contact.controller;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import info.szadkowski.contact.model.MessageContent;
+import info.szadkowski.contact.model.MessageRequest;
 import info.szadkowski.contact.properties.MailAddressesProperties;
 import info.szadkowski.contact.throttle.Throttler;
 import lombok.Builder;
@@ -28,7 +28,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 class MessageControllerTest {
   private static final ObjectMapper MAPPER = new ObjectMapper();
 
-  private List<MessageContent> mails;
+  private List<MessageRequest> mails;
   private MailAddressesProperties mailAddressesProperties;
   private MockedThrottler ipThrottler;
   private MockedThrottler allThrottler;
@@ -61,7 +61,7 @@ class MessageControllerTest {
                             .build()))
     ).andExpect(status().isOk());
 
-    assertThat(mails).containsExactly(MessageContent.builder()
+    assertThat(mails).containsExactly(MessageRequest.builder()
             .subject("mySubject")
             .content("myContent")
             .build());

@@ -1,6 +1,6 @@
 package info.szadkowski.contact.service.mail;
 
-import info.szadkowski.contact.model.MessageContent;
+import info.szadkowski.contact.model.MessageRequest;
 import info.szadkowski.contact.properties.MailAddressesProperties;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -34,7 +34,7 @@ class MailMessageServiceTest {
     mailAddressesProperties.setSenderMail("sender@address.com");
     mailAddressesProperties.setRecipientMail("recipient@address.com");
 
-    service.send(MessageContent.builder()
+    service.send(MessageRequest.builder()
             .subject("subject")
             .content("content")
             .build());

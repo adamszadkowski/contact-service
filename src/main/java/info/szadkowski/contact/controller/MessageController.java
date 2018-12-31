@@ -1,6 +1,6 @@
 package info.szadkowski.contact.controller;
 
-import info.szadkowski.contact.model.MessageContent;
+import info.szadkowski.contact.model.MessageRequest;
 import info.szadkowski.contact.service.MessageService;
 import info.szadkowski.contact.throttle.Throttler;
 import org.springframework.http.HttpStatus;
@@ -32,7 +32,7 @@ public class MessageController {
   public ResponseEntity<Void> sendMessage(@RequestBody Map<String, String> message,
                                           HttpServletRequest request) {
     if (ipThrottler.canProcess(request.getRemoteAddr()) && allThrottler.canProcess("all")) {
-      messageService.send(MessageContent.builder()
+      messageService.send(MessageRequest.builder()
               .subject(message.get("subject"))
               .content(message.get("content"))
               .build());
