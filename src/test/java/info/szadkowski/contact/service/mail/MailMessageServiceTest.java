@@ -1,5 +1,6 @@
 package info.szadkowski.contact.service.mail;
 
+import info.szadkowski.contact.model.MessageContent;
 import info.szadkowski.contact.properties.MailAddressesProperties;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -14,9 +15,9 @@ import javax.mail.internet.InternetAddress;
 import javax.mail.internet.MimeMessage;
 
 @ExtendWith(MockitoExtension.class)
-class SpringMailSenderServiceTest {
+class MailMessageServiceTest {
   private MailAddressesProperties mailAddressesProperties;
-  private SpringJavaMailSenderService service;
+  private MailMessageService service;
 
   @Mock
   private JavaMailSender sender;
@@ -24,7 +25,7 @@ class SpringMailSenderServiceTest {
   @BeforeEach
   void setUp() {
     mailAddressesProperties = new MailAddressesProperties();
-    service = new SpringJavaMailSenderService(mailAddressesProperties, sender);
+    service = new MailMessageService(mailAddressesProperties, sender);
   }
 
   @Test
@@ -33,7 +34,7 @@ class SpringMailSenderServiceTest {
     mailAddressesProperties.setSenderMail("sender@address.com");
     mailAddressesProperties.setRecipientMail("recipient@address.com");
 
-    service.send(MailContent.builder()
+    service.send(MessageContent.builder()
             .subject("subject")
             .content("content")
             .build());

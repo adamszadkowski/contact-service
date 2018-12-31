@@ -1,7 +1,7 @@
 package info.szadkowski.contact.controller;
 
-import info.szadkowski.contact.service.mail.MailContent;
-import info.szadkowski.contact.service.mail.MailSenderService;
+import info.szadkowski.contact.model.MessageContent;
+import info.szadkowski.contact.service.MessageService;
 import info.szadkowski.contact.throttle.Throttler;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -16,23 +16,23 @@ import java.util.Map;
 @RestController
 @RequestMapping(path = "/v1")
 public class MessageController {
-  private final MailSenderService mailSenderService;
+  private final MessageService messageService;
   private final Throttler ipThrottler;
   private final Throttler allThrottler;
 
-  public MessageController(MailSenderService mailSenderService,
+  public MessageController(MessageService messageService,
                            Throttler ipThrottler,
                            Throttler allThrottler) {
-    this.mailSenderService = mailSenderService;
+    this.messageService = messageService;
     this.ipThrottler = ipThrottler;
     this.allThrottler = allThrottler;
   }
 
   @RequestMapping(path = "/message", consumes = MediaType.APPLICATION_JSON_UTF8_VALUE)
-  public ResponseEntity<Void> sendMail(@RequestBody Map<String, String> message,
-                                       HttpServletRequest request) {
+  public ResponseEntity<Void> sendMessage(@RequestBody Map<String, String> message,
+                                          HttpServletRequest request) {
     if (ipThrottler.canProcess(request.getRemoteAddr()) && allThrottler.canProcess("all")) {
-      mailSenderService.send(MailContent.builder()
+      messageService.send(MessageContent.builder()
               .subject(message.get("subject"))
               .content(message.get("content"))
               .build());
