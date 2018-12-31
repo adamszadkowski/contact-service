@@ -2,11 +2,12 @@ package info.szadkowski.contact.controller;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import info.szadkowski.contact.model.MessageRequest;
-import info.szadkowski.contact.properties.MailAddressesProperties;
 import info.szadkowski.contact.model.MessageContent;
+import info.szadkowski.contact.properties.MailAddressesProperties;
 import info.szadkowski.contact.throttle.Throttler;
+import lombok.Builder;
 import lombok.Getter;
+import lombok.Value;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
@@ -54,7 +55,7 @@ class MessageControllerTest {
     mvc.perform(
             post("/v1/message")
                     .contentType(MediaType.APPLICATION_JSON_UTF8)
-                    .content(serialize(MessageRequest.builder()
+                    .content(serialize(SampleMessage.builder()
                             .subject("mySubject")
                             .content("myContent")
                             .build()))
@@ -77,7 +78,7 @@ class MessageControllerTest {
               post("/v1/message")
                       .with(remoteAddr("10.0.0.1"))
                       .contentType(MediaType.APPLICATION_JSON_UTF8)
-                      .content(serialize(MessageRequest.builder()
+                      .content(serialize(SampleMessage.builder()
                               .subject("mySubject")
                               .content("myContent")
                               .build()))
@@ -93,7 +94,7 @@ class MessageControllerTest {
               post("/v1/message")
                       .with(remoteAddr("10.0.0.2"))
                       .contentType(MediaType.APPLICATION_JSON_UTF8)
-                      .content(serialize(MessageRequest.builder()
+                      .content(serialize(SampleMessage.builder()
                               .subject("mySubject")
                               .content("myContent")
                               .build()))
@@ -109,7 +110,7 @@ class MessageControllerTest {
               post("/v1/message")
                       .with(remoteAddr("10.0.0.1"))
                       .contentType(MediaType.APPLICATION_JSON_UTF8)
-                      .content(serialize(MessageRequest.builder()
+                      .content(serialize(SampleMessage.builder()
                               .subject("mySubject")
                               .content("myContent")
                               .build()))
@@ -125,7 +126,7 @@ class MessageControllerTest {
               post("/v1/message")
                       .with(remoteAddr("10.0.0.1"))
                       .contentType(MediaType.APPLICATION_JSON_UTF8)
-                      .content(serialize(MessageRequest.builder()
+                      .content(serialize(SampleMessage.builder()
                               .subject("mySubject")
                               .content("myContent")
                               .build()))
@@ -145,6 +146,13 @@ class MessageControllerTest {
 
   private static String serialize(Object v) throws JsonProcessingException {
     return MAPPER.writeValueAsString(v);
+  }
+
+  @Value
+  @Builder
+  private static class SampleMessage {
+    private String subject;
+    private String content;
   }
 
   private static class MockedThrottler implements Throttler {
