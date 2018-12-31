@@ -12,10 +12,12 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.support.PropertySourcesPlaceholderConfigurer;
 import org.springframework.core.io.ClassPathResource;
+import org.springframework.core.io.Resource;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
+import java.io.IOException;
 import java.time.Duration;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -28,6 +30,7 @@ class ApplicationEnvironmentConfigurationTest {
           MailAddressesProperties.class,
           MailProperties.class,
           ThrottlingProperties.class,
+          TemplateProperties.class,
           YamlConfiguration.class
   })
   @EnableConfigurationProperties
@@ -46,6 +49,13 @@ class ApplicationEnvironmentConfigurationTest {
       assertThat(properties.getIp().getWindow()).isEqualTo(Duration.ofHours(24));
       assertThat(properties.getAll().getLimit()).isEqualTo(15);
       assertThat(properties.getAll().getWindow()).isEqualTo(Duration.ofHours(24));
+    }
+
+    @Test
+    void shouldConfigureTemplateResource(@Autowired TemplateProperties properties) throws IOException {
+      Resource resource = properties.getResource();
+      assertThat(resource.getFilename()).isEqualTo("message.mustache");
+      assertThat(resource.getInputStream()).hasContent("{{content}}");
     }
 
     @Test
