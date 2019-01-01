@@ -1,5 +1,7 @@
 package info.szadkowski.contact.service.mail;
 
+import info.szadkowski.contact.model.MessageRequest;
+import info.szadkowski.contact.properties.MailAddressesProperties;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -13,25 +15,27 @@ import javax.mail.internet.InternetAddress;
 import javax.mail.internet.MimeMessage;
 
 @ExtendWith(MockitoExtension.class)
-class SpringMailSenderServiceTest {
-  private SpringJavaMailSenderService service;
+class MailMessageServiceTest {
+  private MailAddressesProperties mailAddressesProperties;
+  private MailMessageService service;
 
   @Mock
   private JavaMailSender sender;
 
   @BeforeEach
   void setUp() {
-    service = new SpringJavaMailSenderService(sender);
+    mailAddressesProperties = new MailAddressesProperties();
+    service = new MailMessageService(mailAddressesProperties, sender);
   }
 
   @Test
   void shouldSendFormattedMail(@Mock MimeMessage mimeMessage) throws Exception {
     Mockito.when(sender.createMimeMessage()).thenReturn(mimeMessage);
+    mailAddressesProperties.setSenderMail("sender@address.com");
+    mailAddressesProperties.setRecipientMail("recipient@address.com");
 
-    service.send(MailContent.builder()
+    service.send(MessageRequest.builder()
             .subject("subject")
-            .sender("sender@address.com")
-            .recipient("recipient@address.com")
             .content("content")
             .build());
 

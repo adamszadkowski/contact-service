@@ -2,6 +2,7 @@ package info.szadkowski.contact;
 
 import info.szadkowski.contact.controller.MessageController;
 import info.szadkowski.contact.properties.MailAddressesProperties;
+import info.szadkowski.contact.properties.TemplateProperties;
 import info.szadkowski.contact.properties.ThrottlingProperties;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -24,10 +25,14 @@ class ContactServiceApplicationTest {
   @Autowired
   private ThrottlingProperties throttlingProperties;
 
+  @Autowired
+  private TemplateProperties templateProperties;
+
   @Test
   void sanityCheck() {
     assertThat(controller).isNotNull();
     assertThat(mailAddressesProperties).isNotNull();
     assertThat(throttlingProperties).isNotNull();
+    assertThat(templateProperties).isNotNull();
   }
 }

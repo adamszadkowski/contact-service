@@ -19,6 +19,14 @@ POST /v1/message
 }
 ```
 
+ - Request:
+
+   - Type: __JSON__
+   - Fields:
+
+     - "subject" - required field representing message subject
+     - "content" - message field used in default message template (please take a look on [Templates](#templates) section for more information)
+
  - Success response:
 
    - Code: __200__
@@ -31,7 +39,7 @@ POST /v1/message
 
 ## Docker image
 
-This service is exposed as a `klyman/contact-service` image on [Docker HUB](https://hub.docker.com/).
+This service is exposed as a [klyman/contact-service](https://hub.docker.com/r/klyman/contact-service) image on [Docker HUB](https://hub.docker.com/).
 
 ### Configuration
 
@@ -72,6 +80,48 @@ services:
       - MAIL_SERVER_PASSWORD_FILE=/run/secrets/password
     volumes:
       - ./config:/run/secrets
+      - ./config/template.mustache:/app/message.mustache
     ports:
       - "80:80"
+```
+
+## Templates
+
+Messages can be personalized by using [Mustache](https://mustache.github.io/) templates. Default template
+uses only `content` field:
+
+```mustache
+{{content}}
+```
+
+It is possible to inject custom message template by creating volume on `/app/message.mustache`
+(please take a look on example in [Example docker-compose](#Example docker-compose) section).
+
+### Example
+
+For following template:
+
+```mustache
+Phone Number: {{phone}}
+Message: {{message}}
+```
+
+User should send request:
+
+```
+POST /v1/message
+
+{
+  "subject": "mysubject",
+  "phone": "123 456 789",
+  "message": "message"
+}
+```
+
+It is also possible to include `subject` field in template:
+
+```mustache
+Subject: {{subject}}
+Phone Number: {{phone}}
+Message: {{message}}
 ```

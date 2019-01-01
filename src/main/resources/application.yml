@@ -1,6 +1,9 @@
 server:
   port: 80
 
+template:
+  resource: classpath:message.mustache
+
 mail:
   recipientMail: ${MAIL_RECIPIENT_MAIL:}
   senderMail: ${MAIL_SENDER_MAIL:}

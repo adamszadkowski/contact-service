@@ -21,7 +21,8 @@ repositories {
 dependencies {
   compile(
     'org.springframework.boot:spring-boot-starter-web',
-    'org.springframework.boot:spring-boot-starter-mail'
+    'org.springframework.boot:spring-boot-starter-mail',
+    'org.springframework.boot:spring-boot-starter-mustache'
   )
 
   testCompile(
