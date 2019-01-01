@@ -42,6 +42,7 @@ class MessageControllerTest {
     allThrottler = new MockedThrottler();
     MessageController messageController = new MessageController(
             mails::add,
+            r -> "templated:" + r.get("content"),
             ipThrottler,
             allThrottler);
     mvc = MockMvcBuilders.standaloneSetup(messageController)
@@ -63,7 +64,7 @@ class MessageControllerTest {
 
     assertThat(mails).containsExactly(MessageRequest.builder()
             .subject("mySubject")
-            .content("myContent")
+            .content("templated:myContent")
             .build());
   }
 

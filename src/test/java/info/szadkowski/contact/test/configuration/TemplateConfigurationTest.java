@@ -1,8 +1,8 @@
 package info.szadkowski.contact.test.configuration;
 
-import com.samskivert.mustache.Template;
 import info.szadkowski.contact.configuration.TemplateConfiguration;
 import info.szadkowski.contact.properties.TemplateProperties;
+import info.szadkowski.contact.template.TemplateFormatter;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -27,10 +27,10 @@ import static org.assertj.core.api.Assertions.assertThat;
 class TemplateConfigurationTest {
 
   @Test
-  void shouldCreateTemplateBean(@Autowired Template template) {
+  void shouldCreateTemplateFormatterBean(@Autowired TemplateFormatter templateFormatter) {
     var context = Collections.singletonMap("content", "value");
 
-    String execute = template.execute(context);
+    String execute = templateFormatter.format(context);
 
     assertThat(execute).isEqualTo("value");
   }

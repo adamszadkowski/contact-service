@@ -2,6 +2,7 @@ package info.szadkowski.contact.controller;
 
 import info.szadkowski.contact.model.MessageRequest;
 import info.szadkowski.contact.service.MessageService;
+import info.szadkowski.contact.template.TemplateFormatter;
 import info.szadkowski.contact.throttle.Throttler;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -17,13 +18,16 @@ import java.util.Map;
 @RequestMapping(path = "/v1")
 public class MessageController {
   private final MessageService messageService;
+  private final TemplateFormatter formatter;
   private final Throttler ipThrottler;
   private final Throttler allThrottler;
 
   public MessageController(MessageService messageService,
+                           TemplateFormatter formatter,
                            Throttler ipThrottler,
                            Throttler allThrottler) {
     this.messageService = messageService;
+    this.formatter = formatter;
     this.ipThrottler = ipThrottler;
     this.allThrottler = allThrottler;
   }
@@ -34,7 +38,7 @@ public class MessageController {
     if (ipThrottler.canProcess(request.getRemoteAddr()) && allThrottler.canProcess("all")) {
       messageService.send(MessageRequest.builder()
               .subject(message.get("subject"))
-              .content(message.get("content"))
+              .content(formatter.format(message))
               .build());
 
       return new ResponseEntity<>(HttpStatus.OK);
