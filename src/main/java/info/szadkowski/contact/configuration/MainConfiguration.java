@@ -11,8 +11,8 @@ import org.springframework.mail.javamail.JavaMailSender;
 public class MainConfiguration {
 
   @Bean
-  public MessageService mailSenderService(MailAddressesProperties mailAddressesProperties,
-                                          JavaMailSender javaMailSender) {
+  public MessageService mailMessageService(MailAddressesProperties mailAddressesProperties,
+                                           JavaMailSender javaMailSender) {
     return new MailMessageService(mailAddressesProperties, javaMailSender);
   }
 }
