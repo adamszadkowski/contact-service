@@ -26,12 +26,24 @@ import static org.assertj.core.api.Assertions.assertThat;
 @EnableConfigurationProperties
 class TemplateConfigurationTest {
 
+  @Autowired
+  private TemplateFormatter templateFormatter;
+
   @Test
-  void shouldCreateTemplateFormatterBean(@Autowired TemplateFormatter templateFormatter) {
+  void shouldUseContentFieldByDefault() {
     var context = Collections.singletonMap("content", "value");
 
     String execute = templateFormatter.format(context);
 
     assertThat(execute).isEqualTo("value");
+  }
+
+  @Test
+  void shouldEscapeHTMLTags() {
+    var context = Collections.singletonMap("content", "<div>tag</div>");
+
+    String execute = templateFormatter.format(context);
+
+    assertThat(execute).isEqualTo("&lt;div&gt;tag&lt;/div&gt;");
   }
 }
