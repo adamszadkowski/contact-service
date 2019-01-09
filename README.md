@@ -95,7 +95,7 @@ uses only `content` field:
 ```
 
 It is possible to inject custom message template by creating volume on `/app/message.mustache`
-(please take a look on example in [Example docker-compose](#Example docker-compose) section).
+(please take a look on example in [Example docker-compose](#Example-docker-compose) section).
 
 ### Example
 
