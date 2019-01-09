@@ -6,7 +6,7 @@ COPY ./ /src
 
 RUN ./gradlew clean build
 
-RUN unzip build/libs/contact-service-*.jar -d /app
+RUN unzip build/libs/contact-service.jar -d /app
 
 FROM openjdk:11
 

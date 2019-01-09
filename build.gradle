@@ -1,14 +1,13 @@
 plugins {
   id 'java'
   id 'idea'
-  id "org.springframework.boot" version "2.1.1.RELEASE"
+  id 'io.spring.dependency-management' version '1.0.6.RELEASE'
+  id 'org.springframework.boot' version '2.1.1.RELEASE'
   id 'io.franzbecker.gradle-lombok' version '1.14'
 }
 
-apply plugin: 'io.spring.dependency-management'
-
 bootJar {
-  baseName = 'contact-service'
+  archiveName = 'contact-service.jar'
   version = '0.1.0'
 }
 
@@ -18,22 +17,28 @@ repositories {
   mavenCentral()
 }
 
+dependencyManagement {
+  dependencies {
+    dependency 'org.awaitility:awaitility:3.1.5'
+  }
+}
+
 dependencies {
-  compile(
+  implementation(
     'org.springframework.boot:spring-boot-starter-web',
     'org.springframework.boot:spring-boot-starter-mail',
     'org.springframework.boot:spring-boot-starter-mustache'
   )
 
-  testCompile(
+  testImplementation(
+    'org.junit.jupiter:junit-jupiter-api',
     'org.springframework.boot:spring-boot-starter-test',
     'org.assertj:assertj-core',
     'org.mockito:mockito-core',
     'org.mockito:mockito-junit-jupiter',
-    'org.awaitility:awaitility:3.1.5'
+    'org.awaitility:awaitility'
   )
 
-  testImplementation 'org.junit.jupiter:junit-jupiter-api'
   testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine'
 }
 
@@ -43,5 +48,5 @@ test {
 
 lombok {
   version = '1.18.4'
-  sha256 = ""
+  sha256 = ''
 }
