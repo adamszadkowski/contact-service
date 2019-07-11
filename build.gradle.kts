@@ -1,6 +1,7 @@
 import org.springframework.boot.gradle.tasks.bundling.BootJar
 
 plugins {
+  kotlin("jvm") version "1.3.41"
   id("java")
   id("idea")
   id("io.spring.dependency-management") version "1.0.8.RELEASE"
@@ -50,6 +51,7 @@ dependencies {
   implementation("org.springframework.boot:spring-boot-starter-aop")
   implementation("org.springframework.boot:spring-boot-starter-mustache")
 
+  testImplementation(kotlin("stdlib"))
   testImplementation("org.junit.jupiter:junit-jupiter-api")
   testImplementation("org.springframework.boot:spring-boot-starter-test")
   testImplementation("org.assertj:assertj-core")
