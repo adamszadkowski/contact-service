@@ -2,6 +2,7 @@ package info.szadkowski.contact.controller;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import info.szadkowski.contact.controller.exception.ExceptionHandlerController;
 import info.szadkowski.contact.model.MessageRequest;
 import info.szadkowski.contact.properties.MailAddressesProperties;
 import info.szadkowski.contact.throttle.Throttler;
@@ -46,6 +47,7 @@ class MessageControllerTest {
             ipThrottler,
             allThrottler);
     mvc = MockMvcBuilders.standaloneSetup(messageController)
+            .setControllerAdvice(new ExceptionHandlerController())
             .build();
   }
 

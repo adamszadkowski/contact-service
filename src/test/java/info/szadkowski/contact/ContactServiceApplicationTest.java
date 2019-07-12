@@ -1,6 +1,7 @@
 package info.szadkowski.contact;
 
 import info.szadkowski.contact.controller.MessageController;
+import info.szadkowski.contact.controller.exception.ExceptionHandlerController;
 import info.szadkowski.contact.properties.MailAddressesProperties;
 import info.szadkowski.contact.properties.TemplateProperties;
 import info.szadkowski.contact.properties.ThrottlingProperties;
@@ -20,6 +21,9 @@ class ContactServiceApplicationTest {
   private MessageController controller;
 
   @Autowired
+  private ExceptionHandlerController exceptionController;
+
+  @Autowired
   private MailAddressesProperties mailAddressesProperties;
 
   @Autowired
@@ -31,6 +35,7 @@ class ContactServiceApplicationTest {
   @Test
   void sanityCheck() {
     assertThat(controller).isNotNull();
+    assertThat(exceptionController).isNotNull();
     assertThat(mailAddressesProperties).isNotNull();
     assertThat(throttlingProperties).isNotNull();
     assertThat(templateProperties).isNotNull();
