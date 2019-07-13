@@ -1,5 +1,6 @@
 package info.szadkowski.contact.configuration;
 
+import info.szadkowski.contact.throttle.spring.aspect.ThrottlingAspect;
 import info.szadkowski.contact.properties.ThrottlingProperties;
 import info.szadkowski.contact.throttle.Throttler;
 import info.szadkowski.contact.throttle.ThrottlerFactory;
@@ -37,6 +38,11 @@ public class ThrottlerConfiguration {
   @Bean
   public Throttler allThrottler(ThrottlerFactory throttlerFactory) {
     return createThrottler(throttlerFactory, properties.getAll());
+  }
+
+  @Bean
+  public ThrottlingAspect throttlingAspect(Throttler ipThrottler, Throttler allThrottler) {
+    return new ThrottlingAspect(ipThrottler, allThrottler);
   }
 
   @Bean(initMethod = "run")
