@@ -2,6 +2,7 @@ import org.springframework.boot.gradle.tasks.bundling.BootJar
 
 plugins {
   kotlin("jvm") version "1.3.41"
+  kotlin("plugin.spring") version "1.3.41"
   id("java")
   id("idea")
   id("io.spring.dependency-management") version "1.0.8.RELEASE"
@@ -42,6 +43,7 @@ repositories {
 dependencyManagement {
   dependencies {
     dependency("org.awaitility:awaitility:3.1.6")
+    dependency("org.assertj:assertj-core:3.12.2")
   }
 }
 
