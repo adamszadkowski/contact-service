@@ -2,6 +2,7 @@ package info.szadkowski.contact.controller;
 
 import info.szadkowski.contact.controller.exception.ExceptionHandlerController;
 import info.szadkowski.contact.model.MessageRequest;
+import info.szadkowski.contact.service.MessageService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -18,7 +19,8 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @ExtendWith(MockitoExtension.class)
-class MessageControllerTest {
+class MessageControllerTest implements MessageService {
+  private MessageService messageService;
   private List<MessageRequest> messages;
   private MockMvc mvc;
 
@@ -26,7 +28,7 @@ class MessageControllerTest {
   void setUp() {
     messages = new ArrayList<>();
     MessageController messageController = new MessageController(
-            messages::add,
+            this,
             r -> "templated:" + r.get("content")
     );
     mvc = MockMvcBuilders.standaloneSetup(messageController)
@@ -34,8 +36,15 @@ class MessageControllerTest {
             .build();
   }
 
+  @Override
+  public void send(MessageRequest content) {
+    messageService.send(content);
+  }
+
   @Test
   void shouldSendCorrectMailRequest() throws Exception {
+    messageService = messages::add;
+
     mvc.perform(post("/v1/message")
             .contentType(MediaType.APPLICATION_JSON_UTF8)
             .content("" +
@@ -49,5 +58,17 @@ class MessageControllerTest {
             .subject("mySubject")
             .content("templated:myContent")
             .build());
+  }
+
+  @Test
+  void shouldFailOnIncorrectMailRequest() throws Exception {
+    messageService = r -> {
+      throw new MessageSendException();
+    };
+
+    mvc.perform(post("/v1/message")
+            .contentType(MediaType.APPLICATION_JSON_UTF8)
+            .content("{}")
+    ).andExpect(status().isBadRequest());
   }
 }

@@ -6,12 +6,9 @@ import info.szadkowski.contact.service.MessageService;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.MimeMessageHelper;
 
-import javax.mail.MessagingException;
 import javax.mail.internet.MimeMessage;
 
 public class MailMessageService implements MessageService {
-  private static final org.slf4j.Logger LOG = org.slf4j.LoggerFactory.getLogger(MailMessageService.class);
-
   private final MailAddressesProperties mailAddressesProperties;
   private final JavaMailSender javaMailSender;
 
@@ -31,10 +28,10 @@ public class MailMessageService implements MessageService {
       helper.setFrom(mailAddressesProperties.getSenderMail());
       helper.setTo(mailAddressesProperties.getRecipientMail());
       helper.setText(message.getContent());
-    } catch (MessagingException e) {
-      LOG.error("Cannot create a MimeMessage", e);
-    }
 
-    javaMailSender.send(mimeMessage);
+      javaMailSender.send(mimeMessage);
+    } catch (Exception e) {
+      throw new MessageSendException(e);
+    }
   }
 }
