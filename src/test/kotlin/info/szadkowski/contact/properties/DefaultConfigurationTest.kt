@@ -35,10 +35,10 @@ class DefaultConfigurationTest {
     @Test
     fun `Should inject throttling`(@Autowired p: ThrottlingProperties) {
         assertThat(p.clearExpiredRate).isEqualTo(Duration.ofHours(24))
-        assertThat(p.ip.limit).isEqualTo(5)
-        assertThat(p.ip.window).isEqualTo(Duration.ofHours(24))
-        assertThat(p.all.limit).isEqualTo(15)
-        assertThat(p.all.window).isEqualTo(Duration.ofHours(24))
+        assertThat(p.ip!!.limit).isEqualTo(5)
+        assertThat(p.ip!!.window).isEqualTo(Duration.ofHours(24))
+        assertThat(p.all!!.limit).isEqualTo(15)
+        assertThat(p.all!!.window).isEqualTo(Duration.ofHours(24))
     }
 
     @Test

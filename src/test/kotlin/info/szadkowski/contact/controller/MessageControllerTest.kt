@@ -21,14 +21,18 @@ class MessageControllerTest : MessageService {
     lateinit var messages: MutableList<MessageRequest>
     lateinit var mvc: MockMvc
 
-    override fun send(content: MessageRequest) = messageService(content)
+    override fun send(message: MessageRequest) = messageService(message)
 
     @BeforeEach
     fun setUp() {
         messages = mutableListOf()
         val messageController = MessageController(
             this,
-            TemplateFormatter { r -> "templated:" + r.get("content") }
+            object : TemplateFormatter {
+                override fun format(message: Map<String, String>): String {
+                    return "templated:" + message.get("content")
+                }
+            }
         )
         mvc = MockMvcBuilders.standaloneSetup(messageController)
             .setControllerAdvice(ExceptionHandlerController())
@@ -53,10 +57,10 @@ class MessageControllerTest : MessageService {
         ).andExpect(status().isOk())
 
         assertThat(messages).containsExactly(
-            MessageRequest.builder()
-                .subject("mySubject")
-                .content("templated:myContent")
-                .build()
+            MessageRequest(
+                subject = "mySubject",
+                content = "templated:myContent"
+            )
         )
     }
 

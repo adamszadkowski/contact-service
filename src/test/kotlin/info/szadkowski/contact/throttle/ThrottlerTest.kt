@@ -26,8 +26,10 @@ class ThrottlerTest {
 
         @BeforeEach
         fun setUp() {
-            throttler = ThrottlerFactory { systemTimeMillis }
-                .create(Duration.ofMillis(2), ThrottleConfiguration.builder().limit(0).build())
+            throttler = ThrottlerFactory(object : TimeProvider {
+                override val currentMillis: Long
+                    get() = systemTimeMillis
+            }).create(Duration.ofMillis(2), ThrottleConfiguration(limit = 0))
         }
 
         @Test
@@ -41,8 +43,10 @@ class ThrottlerTest {
 
         @BeforeEach
         fun setUp() {
-            throttler = ThrottlerFactory { systemTimeMillis }
-                .create(Duration.ofMillis(2), ThrottleConfiguration.builder().limit(1).build())
+            throttler = ThrottlerFactory(object : TimeProvider {
+                override val currentMillis: Long
+                    get() = systemTimeMillis
+            }).create(Duration.ofMillis(2), ThrottleConfiguration(limit = 1))
         }
 
         @Test
@@ -78,9 +82,12 @@ class ThrottlerTest {
         fun setUp() {
             creationCount = 0
             throttler = LimitingThrottler(
-                TimeProvider { systemTimeMillis },
+                object : TimeProvider {
+                    override val currentMillis: Long
+                        get() = systemTimeMillis
+                },
                 this,
-                ThrottleConfiguration.builder().limit(1).build()
+                ThrottleConfiguration(limit = 1)
             )
         }
 

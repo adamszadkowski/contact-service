@@ -171,8 +171,8 @@ class ThrottleConfigurationTest {
 
     class MockedTimeProvider : TimeProvider {
         var mockedCurrentMillis: Long = 0
-
-        override fun getCurrentMillis(): Long = mockedCurrentMillis
+        override val currentMillis: Long
+            get() = mockedCurrentMillis
     }
 
     class MockedThrottler : Throttler {

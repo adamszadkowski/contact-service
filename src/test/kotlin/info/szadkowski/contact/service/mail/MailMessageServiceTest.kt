@@ -38,10 +38,10 @@ class MailMessageServiceTest {
     @Test
     fun `Should send mail`() {
         service.send(
-            MessageRequest.builder()
-                .subject("subject")
-                .content("content")
-                .build()
+            MessageRequest(
+                subject = "subject",
+                content = "content"
+            )
         )
 
         Mockito.verify(mimeMessage).subject = "subject"
@@ -55,10 +55,10 @@ class MailMessageServiceTest {
     @Test
     fun `Should wrap MailException`(@Mock mailException: MailException) {
         Mockito.doThrow(mailException).`when`(sender).send(Mockito.any(MimeMessage::class.java))
-        val request = MessageRequest.builder()
-            .subject("subject")
-            .content("content")
-            .build()
+        val request = MessageRequest(
+            subject = "subject",
+            content = "content"
+        )
 
         assertThatThrownBy { service.send(request) }
             .isExactlyInstanceOf(MessageService.MessageSendException::class.java)
@@ -67,7 +67,7 @@ class MailMessageServiceTest {
 
     @Test
     fun `Should throw on invalid request`() {
-        val request = MessageRequest.builder().build()
+        val request = MessageRequest()
 
         assertThatThrownBy { service.send(request) }
             .isExactlyInstanceOf(MessageService.MessageSendException::class.java)

@@ -1,13 +1,12 @@
 import org.springframework.boot.gradle.tasks.bundling.BootJar
+import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
 plugins {
   kotlin("jvm") version "1.3.41"
   kotlin("plugin.spring") version "1.3.41"
-  id("java")
   id("idea")
   id("io.spring.dependency-management") version "1.0.8.RELEASE"
   id("org.springframework.boot") version "2.1.6.RELEASE"
-  id("io.franzbecker.gradle-lombok") version "3.1.0"
 }
 
 sourceSets {
@@ -36,6 +35,9 @@ java {
   targetCompatibility = JavaVersion.VERSION_11
 }
 
+val compileKotlin: KotlinCompile by tasks
+compileKotlin.kotlinOptions.jvmTarget = "1.8"
+
 repositories {
   mavenCentral()
 }
@@ -48,6 +50,7 @@ dependencyManagement {
 }
 
 dependencies {
+  implementation(kotlin("stdlib-jdk8"))
   implementation("org.springframework.boot:spring-boot-starter-web")
   implementation("org.springframework.boot:spring-boot-starter-mail")
   implementation("org.springframework.boot:spring-boot-starter-aop")

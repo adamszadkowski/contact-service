@@ -27,9 +27,9 @@ class ThrottlingPropertiesTest {
     @Test
     fun `Should inject throttling configuration`(@Autowired p: ThrottlingProperties) {
         assertThat(p.clearExpiredRate).isEqualTo(Duration.ofSeconds(5))
-        assertThat(p.ip.limit).isEqualTo(1)
-        assertThat(p.ip.window).isEqualTo(Duration.ofSeconds(5))
-        assertThat(p.all.limit).isEqualTo(2)
-        assertThat(p.all.window).isEqualTo(Duration.ofSeconds(10))
+        assertThat(p.ip!!.limit).isEqualTo(1)
+        assertThat(p.ip!!.window).isEqualTo(Duration.ofSeconds(5))
+        assertThat(p.all!!.limit).isEqualTo(2)
+        assertThat(p.all!!.window).isEqualTo(Duration.ofSeconds(10))
     }
 }
