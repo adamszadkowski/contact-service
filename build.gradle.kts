@@ -1,5 +1,5 @@
-import org.springframework.boot.gradle.tasks.bundling.BootJar
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
+import org.springframework.boot.gradle.tasks.bundling.BootJar
 
 plugins {
   kotlin("jvm") version "1.3.41"
@@ -50,7 +50,7 @@ dependencyManagement {
 }
 
 dependencies {
-  implementation(kotlin("stdlib-jdk8"))
+  implementation(kotlin("stdlib"))
   implementation(kotlin("reflect"))
   implementation("org.springframework.boot:spring-boot-starter-web")
   implementation("org.springframework.boot:spring-boot-starter-mail")
@@ -58,7 +58,6 @@ dependencies {
   implementation("org.springframework.boot:spring-boot-starter-mustache")
   implementation("com.fasterxml.jackson.module:jackson-module-kotlin")
 
-  testImplementation(kotlin("stdlib"))
   testImplementation("org.junit.jupiter:junit-jupiter-api")
   testImplementation("org.springframework.boot:spring-boot-starter-test")
   testImplementation("org.assertj:assertj-core")
