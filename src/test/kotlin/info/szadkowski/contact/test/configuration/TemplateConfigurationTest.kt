@@ -25,7 +25,7 @@ class TemplateConfigurationTest {
     fun `Should use content field by default`() {
         val context = mapOf("content" to "value")
 
-        val execute = templateFormatter.format(context)
+        val execute = templateFormatter(context)
 
         assertThat(execute).isEqualTo("value")
     }
@@ -34,7 +34,7 @@ class TemplateConfigurationTest {
     fun `Should escape HTML tags`() {
         val context = mapOf("content" to "<div>tag</div>")
 
-        val execute = templateFormatter.format(context)
+        val execute = templateFormatter(context)
 
         assertThat(execute).isEqualTo("&lt;div&gt;tag&lt;/div&gt;")
     }

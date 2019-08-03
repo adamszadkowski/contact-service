@@ -22,7 +22,7 @@ class MessageController(
         messageService.send(
             MessageRequest(
                 subject = message["subject"],
-                content = formatter.format(message)
+                content = formatter(message)
             )
         )
     }

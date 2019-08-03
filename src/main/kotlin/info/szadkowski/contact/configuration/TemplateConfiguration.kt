@@ -21,11 +21,5 @@ class TemplateConfiguration {
     fun template(reader: Reader) = Mustache.compiler().compile(reader)
 
     @Bean
-    fun templateFormatter(template: Template): TemplateFormatter {
-        return object : TemplateFormatter {
-            override fun format(message: Map<String, String>): String {
-                return template.execute(message)
-            }
-        }
-    }
+    fun templateFormatter(template: Template): TemplateFormatter = { template.execute(it) }
 }

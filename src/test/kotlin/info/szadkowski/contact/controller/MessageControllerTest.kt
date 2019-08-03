@@ -3,7 +3,6 @@ package info.szadkowski.contact.controller
 import info.szadkowski.contact.controller.exception.ExceptionHandlerController
 import info.szadkowski.contact.model.MessageRequest
 import info.szadkowski.contact.service.MessageService
-import info.szadkowski.contact.template.TemplateFormatter
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
@@ -26,14 +25,9 @@ class MessageControllerTest : MessageService {
     @BeforeEach
     fun setUp() {
         messages = mutableListOf()
-        val messageController = MessageController(
-            this,
-            object : TemplateFormatter {
-                override fun format(message: Map<String, String>): String {
-                    return "templated:" + message.get("content")
-                }
-            }
-        )
+        val messageController = MessageController(this) {
+            "templated:" + it["content"]
+        }
         mvc = MockMvcBuilders.standaloneSetup(messageController)
             .setControllerAdvice(ExceptionHandlerController())
             .build()

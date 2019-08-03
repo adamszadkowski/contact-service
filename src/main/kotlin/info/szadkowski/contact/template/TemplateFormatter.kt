@@ -1,5 +1,3 @@
 package info.szadkowski.contact.template
 
-interface TemplateFormatter {
-    fun format(message: Map<String, String>): String
-}
+typealias TemplateFormatter = (Map<String, String>) -> String
