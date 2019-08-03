@@ -56,6 +56,7 @@ dependencies {
   implementation("org.springframework.boot:spring-boot-starter-mail")
   implementation("org.springframework.boot:spring-boot-starter-aop")
   implementation("org.springframework.boot:spring-boot-starter-mustache")
+  implementation("com.fasterxml.jackson.module:jackson-module-kotlin")
 
   testImplementation(kotlin("stdlib"))
   testImplementation("org.junit.jupiter:junit-jupiter-api")
