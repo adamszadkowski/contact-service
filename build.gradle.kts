@@ -51,6 +51,7 @@ dependencyManagement {
 
 dependencies {
   implementation(kotlin("stdlib-jdk8"))
+  implementation(kotlin("reflect"))
   implementation("org.springframework.boot:spring-boot-starter-web")
   implementation("org.springframework.boot:spring-boot-starter-mail")
   implementation("org.springframework.boot:spring-boot-starter-aop")
