@@ -59,10 +59,8 @@ class RequestThrottlingTest {
         )
     }
 
-    private fun remoteAddr(remoteAddr: String): RequestPostProcessor {
-        return RequestPostProcessor { request ->
-            request.remoteAddr = remoteAddr
-            request
-        }
+    private fun remoteAddr(remoteAddr: String) = RequestPostProcessor {
+        it.remoteAddr = remoteAddr
+        it
     }
 }

@@ -35,8 +35,9 @@ java {
   targetCompatibility = JavaVersion.VERSION_11
 }
 
-val compileKotlin: KotlinCompile by tasks
-compileKotlin.kotlinOptions.jvmTarget = "1.8"
+tasks.withType<KotlinCompile>().configureEach {
+  kotlinOptions.jvmTarget = "1.8"
+}
 
 repositories {
   mavenCentral()
@@ -46,6 +47,7 @@ dependencyManagement {
   dependencies {
     dependency("org.awaitility:awaitility:3.1.6")
     dependency("org.assertj:assertj-core:3.12.2")
+    dependency("io.mockk:mockk:1.9")
   }
 }
 
@@ -61,8 +63,7 @@ dependencies {
   testImplementation("org.junit.jupiter:junit-jupiter-api")
   testImplementation("org.springframework.boot:spring-boot-starter-test")
   testImplementation("org.assertj:assertj-core")
-  testImplementation("org.mockito:mockito-core")
-  testImplementation("org.mockito:mockito-junit-jupiter")
+  testImplementation("io.mockk:mockk")
   testImplementation("org.awaitility:awaitility")
 
   testRuntimeOnly("org.junit.jupiter:junit-jupiter-engine")

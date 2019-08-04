@@ -3,35 +3,38 @@ package info.szadkowski.contact.service.mail
 import info.szadkowski.contact.model.MessageRequest
 import info.szadkowski.contact.properties.MailAddressesProperties
 import info.szadkowski.contact.service.MessageService
+import io.mockk.every
+import io.mockk.impl.annotations.MockK
+import io.mockk.impl.annotations.RelaxedMockK
+import io.mockk.junit5.MockKExtension
+import io.mockk.verify
 import org.assertj.core.api.Assertions.assertThatThrownBy
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.extension.ExtendWith
-import org.mockito.Mock
-import org.mockito.Mockito
-import org.mockito.junit.jupiter.MockitoExtension
 import org.springframework.mail.MailException
 import org.springframework.mail.javamail.JavaMailSender
 import javax.mail.Message
 import javax.mail.internet.InternetAddress
 import javax.mail.internet.MimeMessage
 
-@ExtendWith(MockitoExtension::class)
+@ExtendWith(MockKExtension::class)
 class MailMessageServiceTest {
     lateinit var service: MailMessageService
 
-    @Mock
+    @RelaxedMockK
     lateinit var sender: JavaMailSender
 
-    @Mock
+    @RelaxedMockK
     lateinit var mimeMessage: MimeMessage
 
     @BeforeEach
     fun setUp() {
-        val mailAddressesProperties = MailAddressesProperties()
-        mailAddressesProperties.senderMail = "sender@address.com"
-        mailAddressesProperties.recipientMail = "recipient@address.com"
-        Mockito.`when`(sender.createMimeMessage()).thenReturn(mimeMessage)
+        val mailAddressesProperties = MailAddressesProperties().apply {
+            senderMail = "sender@address.com"
+            recipientMail = "recipient@address.com"
+        }
+        every { sender.createMimeMessage() } returns mimeMessage
         service = MailMessageService(mailAddressesProperties, sender)
     }
 
@@ -44,17 +47,19 @@ class MailMessageServiceTest {
             )
         )
 
-        Mockito.verify(mimeMessage).subject = "subject"
-        Mockito.verify(mimeMessage).setFrom(InternetAddress("sender@address.com"))
-        Mockito.verify(mimeMessage).setRecipient(Message.RecipientType.TO, InternetAddress("recipient@address.com"))
-        Mockito.verify(mimeMessage).setText("content")
+        with(mimeMessage) {
+            verify { subject = "subject" }
+            verify { setFrom(InternetAddress("sender@address.com")) }
+            verify { setRecipient(Message.RecipientType.TO, InternetAddress("recipient@address.com")) }
+            verify { setText("content") }
+        }
 
-        Mockito.verify(sender).send(mimeMessage)
+        verify { sender.send(mimeMessage) }
     }
 
     @Test
-    fun `Should wrap MailException`(@Mock mailException: MailException) {
-        Mockito.doThrow(mailException).`when`(sender).send(Mockito.any(MimeMessage::class.java))
+    fun `Should wrap MailException`(@MockK mailException: MailException) {
+        every { sender.send(ofType(MimeMessage::class)) } throws mailException
         val request = MessageRequest(
             subject = "subject",
             content = "content"

@@ -6,15 +6,12 @@ import info.szadkowski.contact.service.MessageService
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
-import org.junit.jupiter.api.extension.ExtendWith
-import org.mockito.junit.jupiter.MockitoExtension
 import org.springframework.http.MediaType
 import org.springframework.test.web.servlet.MockMvc
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.status
 import org.springframework.test.web.servlet.setup.MockMvcBuilders
 
-@ExtendWith(MockitoExtension::class)
 class MessageControllerTest : MessageService {
     lateinit var messageService: (MessageRequest) -> Unit
     lateinit var messages: MutableList<MessageRequest>
