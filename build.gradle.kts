@@ -1,11 +1,12 @@
+import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 import org.springframework.boot.gradle.tasks.bundling.BootJar
 
 plugins {
-  id("java")
+  kotlin("jvm") version "1.3.41"
+  kotlin("plugin.spring") version "1.3.41"
   id("idea")
   id("io.spring.dependency-management") version "1.0.8.RELEASE"
   id("org.springframework.boot") version "2.1.6.RELEASE"
-  id("io.franzbecker.gradle-lombok") version "3.1.0"
 }
 
 sourceSets {
@@ -34,6 +35,10 @@ java {
   targetCompatibility = JavaVersion.VERSION_11
 }
 
+tasks.withType<KotlinCompile>().configureEach {
+  kotlinOptions.jvmTarget = "1.8"
+}
+
 repositories {
   mavenCentral()
 }
@@ -41,20 +46,24 @@ repositories {
 dependencyManagement {
   dependencies {
     dependency("org.awaitility:awaitility:3.1.6")
+    dependency("org.assertj:assertj-core:3.12.2")
+    dependency("io.mockk:mockk:1.9")
   }
 }
 
 dependencies {
+  implementation(kotlin("stdlib"))
+  implementation(kotlin("reflect"))
   implementation("org.springframework.boot:spring-boot-starter-web")
   implementation("org.springframework.boot:spring-boot-starter-mail")
   implementation("org.springframework.boot:spring-boot-starter-aop")
   implementation("org.springframework.boot:spring-boot-starter-mustache")
+  implementation("com.fasterxml.jackson.module:jackson-module-kotlin")
 
   testImplementation("org.junit.jupiter:junit-jupiter-api")
   testImplementation("org.springframework.boot:spring-boot-starter-test")
   testImplementation("org.assertj:assertj-core")
-  testImplementation("org.mockito:mockito-core")
-  testImplementation("org.mockito:mockito-junit-jupiter")
+  testImplementation("io.mockk:mockk")
   testImplementation("org.awaitility:awaitility")
 
   testRuntimeOnly("org.junit.jupiter:junit-jupiter-engine")
