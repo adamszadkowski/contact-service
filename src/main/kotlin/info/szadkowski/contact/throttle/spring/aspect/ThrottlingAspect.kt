@@ -13,8 +13,8 @@ class ThrottlingAspect(
     private val allThrottler: Throttler
 ) {
 
-    @Before("@annotation(throttle)")
-    fun throttle(throttle: Throttle) {
+    @Before("@annotation(info.szadkowski.contact.throttle.spring.aspect.Throttle)")
+    fun throttle() {
         val request = (RequestContextHolder.currentRequestAttributes() as ServletRequestAttributes).request
 
         if (!ipThrottler.canProcess(request.remoteAddr) || !allThrottler.canProcess("all")) {
