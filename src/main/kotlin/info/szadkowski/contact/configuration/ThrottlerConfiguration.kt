@@ -36,24 +36,15 @@ class ThrottlerConfiguration {
         ThrottlingAspect(ipThrottler, allThrottler)
 
     @Bean(initMethod = "run")
-    fun clearer(
-        taskScheduler: TaskScheduler,
-        throttlers: List<Throttler>
-    ): Runnable {
-        return Runnable {
-            for (throttler in throttlers) {
-                taskScheduler.scheduleAtFixedRate(throttler::clearExpired, properties.clearExpiredRate)
-            }
+    fun clearer(taskScheduler: TaskScheduler, throttlers: List<Throttler>) = Runnable {
+        for (throttler in throttlers) {
+            taskScheduler.scheduleAtFixedRate(throttler::clearExpired, properties.clearExpiredRate)
         }
     }
 
-    private fun createThrottler(
-        throttlerFactory: ThrottlerFactory,
-        scope: ThrottlingProperties.ThrottlingScope
-    ): Throttler {
-        return throttlerFactory.create(
+    private fun createThrottler(throttlerFactory: ThrottlerFactory, scope: ThrottlingProperties.ThrottlingScope) =
+        throttlerFactory.create(
             scope.window,
             ThrottleConfiguration(limit = scope.limit)
         )
-    }
 }
