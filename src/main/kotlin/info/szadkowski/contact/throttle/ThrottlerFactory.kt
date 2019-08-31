@@ -7,15 +7,13 @@ import java.time.Duration
 
 class ThrottlerFactory(private val timeProvider: TimeProvider) {
 
-    fun create(windowSize: Duration, throttleConfiguration: ThrottleConfiguration): Throttler {
-        return when {
-            throttleConfiguration.limit == 0L -> NonLimitingThrottler()
+    fun create(windowSize: Duration, throttleConfiguration: ThrottleConfiguration) =
+        when (throttleConfiguration.limit) {
+            0L -> NonLimitingThrottler()
             else -> LimitingThrottler(
                 timeProvider,
                 { TumblingCounter(windowSize) },
                 throttleConfiguration
             )
         }
-
-    }
 }

@@ -14,8 +14,7 @@ import java.io.Reader
 class TemplateConfiguration {
 
     @Bean
-    fun templateReader(@Autowired properties: TemplateProperties) =
-        InputStreamReader(properties.resource.inputStream)
+    fun templateReader(@Autowired properties: TemplateProperties) = InputStreamReader(properties.resource.inputStream)
 
     @Bean
     fun template(reader: Reader) = Mustache.compiler().compile(reader)

@@ -28,12 +28,10 @@ class ThrottlerConfiguration {
     fun ipThrottler(throttlerFactory: ThrottlerFactory) = createThrottler(throttlerFactory, properties.ip!!)
 
     @Bean
-    fun allThrottler(throttlerFactory: ThrottlerFactory) =
-        createThrottler(throttlerFactory, properties.all!!)
+    fun allThrottler(throttlerFactory: ThrottlerFactory) = createThrottler(throttlerFactory, properties.all!!)
 
     @Bean
-    fun throttlingAspect(ipThrottler: Throttler, allThrottler: Throttler) =
-        ThrottlingAspect(ipThrottler, allThrottler)
+    fun throttlingAspect(ipThrottler: Throttler, allThrottler: Throttler) = ThrottlingAspect(ipThrottler, allThrottler)
 
     @Bean(initMethod = "run")
     fun clearer(taskScheduler: TaskScheduler, throttlers: List<Throttler>) = Runnable {
