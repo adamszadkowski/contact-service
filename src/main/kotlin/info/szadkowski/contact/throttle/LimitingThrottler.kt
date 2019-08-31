@@ -16,7 +16,7 @@ internal class LimitingThrottler(
     override fun canProcess(key: String): Boolean {
         val currentMillis = timeProvider.currentMillis
         val count = keyToCounterMapping
-            .computeIfAbsent(key) { tumblingCounterFactory.create() }
+            .computeIfAbsent(key) { tumblingCounterFactory() }
             .count(currentMillis)
         return count <= throttleConfiguration.limit
     }

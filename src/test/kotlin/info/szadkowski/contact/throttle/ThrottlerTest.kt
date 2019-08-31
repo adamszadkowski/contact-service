@@ -1,7 +1,6 @@
 package info.szadkowski.contact.throttle
 
 import info.szadkowski.contact.throttle.counter.TumblingCounter
-import info.szadkowski.contact.throttle.counter.TumblingCounterFactory
 import info.szadkowski.contact.throttle.properties.ThrottleConfiguration
 import info.szadkowski.contact.throttle.time.TimeProvider
 import org.assertj.core.api.AbstractBooleanAssert
@@ -75,7 +74,7 @@ class ThrottlerTest {
     }
 
     @Nested
-    inner class Clearing : TumblingCounterFactory {
+    inner class Clearing {
         private var creationCount: Int = 0
 
         @BeforeEach
@@ -86,14 +85,12 @@ class ThrottlerTest {
                     override val currentMillis: Long
                         get() = systemTimeMillis
                 },
-                this,
+                {
+                    creationCount++
+                    TumblingCounter(Duration.ofMillis(10))
+                },
                 ThrottleConfiguration(limit = 1)
             )
-        }
-
-        override fun create(): TumblingCounter {
-            creationCount++
-            return TumblingCounter(Duration.ofMillis(10))
         }
 
         @Test
