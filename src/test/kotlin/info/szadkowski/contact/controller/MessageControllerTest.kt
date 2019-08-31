@@ -23,7 +23,7 @@ class MessageControllerTest : MessageService {
     fun setUp() {
         messages = mutableListOf()
         val messageController = MessageController(this) {
-            "templated:" + it["content"]
+            "templated:" + this["content"]
         }
         mvc = MockMvcBuilders.standaloneSetup(messageController)
             .setControllerAdvice(ExceptionHandlerController())

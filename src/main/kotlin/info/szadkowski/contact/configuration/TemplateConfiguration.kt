@@ -21,5 +21,5 @@ class TemplateConfiguration {
     fun template(reader: Reader) = Mustache.compiler().compile(reader)
 
     @Bean
-    fun templateFormatter(template: Template): TemplateFormatter = { template.execute(it) }
+    fun templateFormatter(template: Template): TemplateFormatter = { template.execute(this) }
 }

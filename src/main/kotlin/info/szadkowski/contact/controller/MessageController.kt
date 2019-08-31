@@ -13,7 +13,7 @@ import org.springframework.web.bind.annotation.RestController
 @RequestMapping(path = ["/v1"])
 class MessageController(
     private val messageService: MessageService,
-    private val formatter: TemplateFormatter
+    private val format: TemplateFormatter
 ) {
 
     @Throttle
@@ -22,7 +22,7 @@ class MessageController(
         messageService.send(
             MessageRequest(
                 subject = message["subject"],
-                content = formatter(message)
+                content = message.format()
             )
         )
     }
