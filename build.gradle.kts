@@ -33,6 +33,7 @@ dependencyManagement {
 dependencies {
     implementation(kotlin("stdlib"))
     implementation(kotlin("reflect"))
+    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.3.0")
 
     implementation("org.springframework.boot:spring-boot-starter-web")
     implementation("org.springframework.boot:spring-boot-starter-mail")
@@ -45,6 +46,7 @@ dependencies {
     testImplementation("org.assertj:assertj-core")
     testImplementation("io.mockk:mockk")
     testImplementation("org.awaitility:awaitility")
+    testImplementation("org.jetbrains.kotlinx:kotlinx-coroutines-test:1.3.0")
 
     testRuntimeOnly("org.junit.jupiter:junit-jupiter-engine")
 }
