@@ -2,8 +2,8 @@ import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 import org.springframework.boot.gradle.tasks.bundling.BootJar
 
 plugins {
-    kotlin("jvm") version "1.3.41"
-    kotlin("plugin.spring") version "1.3.41"
+    kotlin("jvm") version "1.3.50"
+    kotlin("plugin.spring") version "1.3.50"
     id("nebula.integtest") version "6.0.3"
     id("idea")
     id("io.spring.dependency-management") version "1.0.8.RELEASE"
