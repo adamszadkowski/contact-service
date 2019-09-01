@@ -7,45 +7,43 @@ import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.springframework.http.MediaType
-import org.springframework.test.web.servlet.MockMvc
-import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post
-import org.springframework.test.web.servlet.result.MockMvcResultMatchers.status
-import org.springframework.test.web.servlet.setup.MockMvcBuilders
+import org.springframework.test.web.reactive.server.WebTestClient
 
 class MessageControllerTest : MessageService {
     lateinit var messageService: (MessageRequest) -> Unit
-    lateinit var messages: MutableList<MessageRequest>
-    lateinit var mvc: MockMvc
+    lateinit var client: WebTestClient
 
     override fun send(message: MessageRequest) = messageService(message)
 
     @BeforeEach
     fun setUp() {
-        messages = mutableListOf()
         val messageController = MessageController(this) {
             "templated:" + this["content"]
         }
-        mvc = MockMvcBuilders.standaloneSetup(messageController)
-            .setControllerAdvice(ExceptionHandlerController())
+        client = WebTestClient
+            .bindToController(messageController)
+            .controllerAdvice(ExceptionHandlerController())
             .build()
     }
 
     @Test
     fun `Should send correct mail request`() {
+        val messages = mutableListOf<MessageRequest>()
         messageService = { messages.add(it) }
 
-        mvc.perform(
-            post("/v1/message")
-                .contentType(MediaType.APPLICATION_JSON_UTF8)
-                .content(
-                    """
-                        {
-                            "subject": "mySubject",
-                            "content": "myContent"
-                        }
-                    """.trimIndent()
-                )
-        ).andExpect(status().isOk())
+        client.post()
+            .uri("/v1/message")
+            .contentType(MediaType.APPLICATION_JSON_UTF8)
+            .syncBody(
+                """
+                    {
+                        "subject": "mySubject",
+                        "content": "myContent"
+                    }
+                """.trimIndent()
+            )
+            .exchange()
+            .expectStatus().isOk
 
         assertThat(messages).containsExactly(
             MessageRequest(
@@ -59,10 +57,11 @@ class MessageControllerTest : MessageService {
     fun `Should fail on incorrect mail request`() {
         messageService = { throw MessageService.MessageSendException() }
 
-        mvc.perform(
-            post("/v1/message")
-                .contentType(MediaType.APPLICATION_JSON_UTF8)
-                .content("{}")
-        ).andExpect(status().isBadRequest())
+        client.post()
+            .uri("/v1/message")
+            .contentType(MediaType.APPLICATION_JSON_UTF8)
+            .syncBody("{}")
+            .exchange()
+            .expectStatus().isBadRequest
     }
 }
