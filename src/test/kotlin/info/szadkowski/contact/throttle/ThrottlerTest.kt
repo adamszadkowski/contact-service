@@ -3,11 +3,14 @@ package info.szadkowski.contact.throttle
 import info.szadkowski.contact.throttle.counter.TumblingCounter
 import info.szadkowski.contact.throttle.properties.ThrottleConfiguration
 import info.szadkowski.contact.throttle.time.TimeProvider
-import org.assertj.core.api.AbstractBooleanAssert
-import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Nested
 import org.junit.jupiter.api.Test
+import strikt.api.DescribeableBuilder
+import strikt.api.expectThat
+import strikt.assertions.isEqualTo
+import strikt.assertions.isFalse
+import strikt.assertions.isTrue
 import java.time.Duration
 
 class ThrottlerTest {
@@ -33,7 +36,7 @@ class ThrottlerTest {
 
         @Test
         fun `Should not throttle`() {
-            assertCanProcess("key", 0).isTrue()
+            expectCanProcess("key", 0).isTrue()
         }
     }
 
@@ -50,26 +53,26 @@ class ThrottlerTest {
 
         @Test
         fun `Should process one`() {
-            assertCanProcess("key", 0).isTrue()
-            assertCanProcess("key", 1).isFalse()
+            expectCanProcess("key", 0).isTrue()
+            expectCanProcess("key", 1).isFalse()
         }
 
         @Test
         fun `Should process when window tumble`() {
-            assertCanProcess("key", 0).isTrue()
-            assertCanProcess("key", 1).isFalse()
+            expectCanProcess("key", 0).isTrue()
+            expectCanProcess("key", 1).isFalse()
 
-            assertCanProcess("key", 2).isTrue()
+            expectCanProcess("key", 2).isTrue()
         }
 
         @Test
         fun `Should process keys separately`() {
-            assertCanProcess("key1", 0).isTrue()
-            assertCanProcess("key1", 1).isFalse()
-            assertCanProcess("key2", 1).isTrue()
+            expectCanProcess("key1", 0).isTrue()
+            expectCanProcess("key1", 1).isFalse()
+            expectCanProcess("key2", 1).isTrue()
 
-            assertCanProcess("key1", 2).isTrue()
-            assertCanProcess("key2", 2).isFalse()
+            expectCanProcess("key1", 2).isTrue()
+            expectCanProcess("key2", 2).isFalse()
         }
     }
 
@@ -104,9 +107,9 @@ class ThrottlerTest {
             throttler.clearExpired()
 
             // then
-            assertThat(creationCount).isEqualTo(1)
+            expectThat(creationCount).isEqualTo(1)
             throttler.canProcess("key")
-            assertThat(creationCount).isEqualTo(2)
+            expectThat(creationCount).isEqualTo(2)
         }
 
         @Test
@@ -120,9 +123,9 @@ class ThrottlerTest {
             throttler.clearExpired()
 
             // then
-            assertThat(creationCount).isEqualTo(1)
+            expectThat(creationCount).isEqualTo(1)
             throttler.canProcess("key")
-            assertThat(creationCount).isEqualTo(1)
+            expectThat(creationCount).isEqualTo(1)
         }
 
         @Test
@@ -138,16 +141,16 @@ class ThrottlerTest {
             throttler.clearExpired()
 
             // then
-            assertThat(creationCount).isEqualTo(2)
+            expectThat(creationCount).isEqualTo(2)
             throttler.canProcess("key1")
-            assertThat(creationCount).isEqualTo(3)
+            expectThat(creationCount).isEqualTo(3)
             throttler.canProcess("key2")
-            assertThat(creationCount).isEqualTo(3)
+            expectThat(creationCount).isEqualTo(3)
         }
     }
 
-    private fun assertCanProcess(key: String, currentTimeMillis: Long): AbstractBooleanAssert<*> {
+    private fun expectCanProcess(key: String, currentTimeMillis: Long): DescribeableBuilder<Boolean> {
         systemTimeMillis = currentTimeMillis
-        return assertThat(throttler.canProcess(key))
+        return expectThat(throttler.canProcess(key))
     }
 }

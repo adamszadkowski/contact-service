@@ -1,6 +1,5 @@
 package info.szadkowski.contact.properties
 
-import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.extension.ExtendWith
 import org.springframework.beans.factory.annotation.Autowired
@@ -8,6 +7,9 @@ import org.springframework.boot.context.properties.EnableConfigurationProperties
 import org.springframework.test.context.ContextConfiguration
 import org.springframework.test.context.TestPropertySource
 import org.springframework.test.context.junit.jupiter.SpringExtension
+import strikt.api.expectThat
+import strikt.assertions.isEqualTo
+import strikt.assertions.isNotNull
 import java.time.Duration
 
 @ExtendWith(SpringExtension::class)
@@ -26,10 +28,20 @@ class ThrottlingPropertiesTest {
 
     @Test
     fun `Should inject throttling configuration`(@Autowired p: ThrottlingProperties) {
-        assertThat(p.clearExpiredRate).isEqualTo(Duration.ofSeconds(5))
-        assertThat(p.ip!!.limit).isEqualTo(1)
-        assertThat(p.ip!!.window).isEqualTo(Duration.ofSeconds(5))
-        assertThat(p.all!!.limit).isEqualTo(2)
-        assertThat(p.all!!.window).isEqualTo(Duration.ofSeconds(10))
+        expectThat(p) {
+            get { clearExpiredRate }.isEqualTo(Duration.ofSeconds(5))
+            get { ip }
+                .isNotNull()
+                .and {
+                    get { limit }.isEqualTo(1)
+                    get { window }.isEqualTo(Duration.ofSeconds(5))
+                }
+            get { all }
+                .isNotNull()
+                .and {
+                    get { limit }.isEqualTo(2)
+                    get { window }.isEqualTo(Duration.ofSeconds(10))
+                }
+        }
     }
 }

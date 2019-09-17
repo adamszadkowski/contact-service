@@ -19,13 +19,13 @@ tasks.withType<KotlinCompile>().configureEach {
 }
 
 repositories {
-    mavenCentral()
+    jcenter()
 }
 
 dependencyManagement {
     dependencies {
         dependency("org.awaitility:awaitility:3.1.6")
-        dependency("org.assertj:assertj-core:3.12.2")
+        dependency("io.strikt:strikt-core:0.21.1")
         dependency("io.mockk:mockk:1.9")
     }
 }
@@ -45,12 +45,16 @@ dependencies {
 
     testImplementation("org.junit.jupiter:junit-jupiter-api")
     testImplementation("org.springframework.boot:spring-boot-starter-test")
-    testImplementation("org.assertj:assertj-core")
+    testImplementation("io.strikt:strikt-core")
     testImplementation("io.mockk:mockk")
     testImplementation("org.awaitility:awaitility")
     testImplementation("org.jetbrains.kotlinx:kotlinx-coroutines-test:1.3.0")
 
     testRuntimeOnly("org.junit.jupiter:junit-jupiter-engine")
+}
+
+configurations.forEach {
+    it.exclude(group = "org.assertj")
 }
 
 tasks.withType<Test>().configureEach {

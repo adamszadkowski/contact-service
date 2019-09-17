@@ -3,11 +3,12 @@ package info.szadkowski.contact.controller
 import info.szadkowski.contact.controller.exception.ExceptionHandlerController
 import info.szadkowski.contact.model.MessageRequest
 import info.szadkowski.contact.service.MessageService
-import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.springframework.http.MediaType
 import org.springframework.test.web.reactive.server.WebTestClient
+import strikt.api.expectThat
+import strikt.assertions.containsExactly
 
 class MessageControllerTest : MessageService {
     lateinit var messageService: (MessageRequest) -> Unit
@@ -45,7 +46,7 @@ class MessageControllerTest : MessageService {
             .exchange()
             .expectStatus().isOk
 
-        assertThat(messages).containsExactly(
+        expectThat(messages).containsExactly(
             MessageRequest(
                 subject = "mySubject",
                 content = "templated:myContent"
