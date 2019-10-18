@@ -34,8 +34,8 @@ class MessageControllerTest : MessageService {
 
         client.post()
             .uri("/v1/message")
-            .contentType(MediaType.APPLICATION_JSON_UTF8)
-            .syncBody(
+            .contentType(MediaType.APPLICATION_JSON)
+            .bodyValue(
                 """
                     {
                         "subject": "mySubject",
@@ -60,8 +60,8 @@ class MessageControllerTest : MessageService {
 
         client.post()
             .uri("/v1/message")
-            .contentType(MediaType.APPLICATION_JSON_UTF8)
-            .syncBody("{}")
+            .contentType(MediaType.APPLICATION_JSON)
+            .bodyValue("{}")
             .exchange()
             .expectStatus().isBadRequest
     }

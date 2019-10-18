@@ -20,7 +20,7 @@ class MessageController(
 ) {
 
     @Throttle
-    @RequestMapping(path = ["/message"], consumes = [MediaType.APPLICATION_JSON_UTF8_VALUE])
+    @RequestMapping(path = ["/message"], consumes = [MediaType.APPLICATION_JSON_VALUE])
     fun sendMessage(@RequestBody message: Mono<Map<String, String>>) = mono<Unit> {
         val m = message.awaitFirst()
         messageService.send(

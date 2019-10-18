@@ -7,7 +7,7 @@ plugins {
     id("nebula.integtest") version "6.0.3"
     id("idea")
     id("io.spring.dependency-management") version "1.0.8.RELEASE"
-    id("org.springframework.boot") version "2.1.7.RELEASE"
+    id("org.springframework.boot") version "2.2.0.RELEASE"
 }
 
 tasks.getByName<BootJar>("bootJar") {

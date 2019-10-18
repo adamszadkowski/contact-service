@@ -45,8 +45,8 @@ class RequestThrottlingTest {
         .post()
         .uri("/v1/message")
         .attribute("Host", address)
-        .contentType(MediaType.APPLICATION_JSON_UTF8)
-        .syncBody(
+        .contentType(MediaType.APPLICATION_JSON)
+        .bodyValue(
             """
                 {
                    "subject": "subject",
