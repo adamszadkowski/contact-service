@@ -4,7 +4,6 @@ import info.szadkowski.contact.properties.ThrottlingProperties
 import info.szadkowski.contact.throttle.Throttler
 import info.szadkowski.contact.throttle.ThrottlerFactory
 import info.szadkowski.contact.throttle.properties.ThrottleConfiguration
-import info.szadkowski.contact.throttle.spring.aspect.ThrottlingAspect
 import info.szadkowski.contact.throttle.time.SystemTimeProvider
 import info.szadkowski.contact.throttle.time.TimeProvider
 import org.springframework.beans.factory.annotation.Autowired
@@ -29,9 +28,6 @@ class ThrottlerConfiguration {
 
     @Bean
     fun allThrottler(throttlerFactory: ThrottlerFactory) = createThrottler(throttlerFactory, properties.all!!)
-
-    @Bean
-    fun throttlingAspect(ipThrottler: Throttler, allThrottler: Throttler) = ThrottlingAspect(ipThrottler, allThrottler)
 
     @Bean(initMethod = "run")
     fun clearer(taskScheduler: TaskScheduler, throttlers: List<Throttler>) = Runnable {

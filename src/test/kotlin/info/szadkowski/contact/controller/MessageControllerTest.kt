@@ -3,6 +3,7 @@ package info.szadkowski.contact.controller
 import info.szadkowski.contact.controller.exception.ExceptionHandlerController
 import info.szadkowski.contact.model.MessageRequest
 import info.szadkowski.contact.service.MessageService
+import info.szadkowski.contact.throttle.Throttler
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.springframework.http.MediaType
@@ -18,12 +19,17 @@ class MessageControllerTest : MessageService {
 
     @BeforeEach
     fun setUp() {
-        val messageController = MessageController(this) {
+        val dummyThrottler = object : Throttler {
+            override fun canProcess(key: String) = true
+            override fun clearExpired() = Unit
+        }
+        val messageController = MessageController(this, dummyThrottler, dummyThrottler) {
             "templated:" + this["content"]
         }
         client = WebTestClient
             .bindToController(messageController)
             .controllerAdvice(ExceptionHandlerController())
+            .webFilter<WebTestClient.ControllerSpec>(IpReadingFilter())
             .build()
     }
 
