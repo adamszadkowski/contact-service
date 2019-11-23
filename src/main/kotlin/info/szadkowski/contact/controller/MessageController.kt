@@ -5,13 +5,13 @@ import info.szadkowski.contact.model.MessageRequest
 import info.szadkowski.contact.service.MessageService
 import info.szadkowski.contact.template.TemplateFormatter
 import info.szadkowski.contact.throttle.Throttler
-import kotlinx.coroutines.reactive.awaitFirst
-import kotlinx.coroutines.reactor.mono
+import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.reactor.ReactorContext
 import org.springframework.http.MediaType
 import org.springframework.web.bind.annotation.RequestBody
 import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RestController
-import reactor.core.publisher.Mono
+import kotlin.coroutines.coroutineContext
 
 @RestController
 @RequestMapping(path = ["/v1"])
@@ -22,23 +22,17 @@ class MessageController(
     private val format: TemplateFormatter
 ) {
 
+    @ExperimentalCoroutinesApi
     @RequestMapping(path = ["/message"], consumes = [MediaType.APPLICATION_JSON_VALUE])
-    fun sendMessage(@RequestBody message: Mono<Map<String, String>>) = mono<Unit> {
-        val m = message.flatMap { msg ->
-            Mono.subscriberContext()
-                .map {
-                    it.get<String>("ip")
-                }.map {
-                    if (!ipThrottler.canProcess(it) || !allThrottler.canProcess("all")) {
-                        throw ThrottledRequestException()
-                    }
-                    msg
-                }
-        }.awaitFirst()
+    suspend fun sendMessage(@RequestBody message: Map<String, String>) {
+        val ip = coroutineContext[ReactorContext]!!.context.get<String>("ip")
+        if (!ipThrottler.canProcess(ip) || !allThrottler.canProcess("all")) {
+            throw ThrottledRequestException()
+        }
         messageService.send(
             MessageRequest(
-                subject = m["subject"],
-                content = m.format()
+                subject = message["subject"],
+                content = message.format()
             )
         )
     }
