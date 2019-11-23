@@ -15,7 +15,7 @@ class MessageControllerTest : MessageService {
     lateinit var messageService: (MessageRequest) -> Unit
     lateinit var client: WebTestClient
 
-    override fun send(message: MessageRequest) = messageService(message)
+    override suspend fun send(message: MessageRequest) = messageService(message)
 
     @BeforeEach
     fun setUp() {

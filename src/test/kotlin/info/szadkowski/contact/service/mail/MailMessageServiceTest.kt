@@ -8,6 +8,7 @@ import io.mockk.impl.annotations.MockK
 import io.mockk.impl.annotations.RelaxedMockK
 import io.mockk.junit5.MockKExtension
 import io.mockk.verify
+import kotlinx.coroutines.runBlocking
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.extension.ExtendWith
@@ -40,7 +41,7 @@ class MailMessageServiceTest {
     }
 
     @Test
-    fun `Should send mail`() {
+    fun `Should send mail`() = runBlocking<Unit> {
         service.send(
             MessageRequest(
                 subject = "subject",
@@ -60,7 +61,8 @@ class MailMessageServiceTest {
 
     @Test
     fun `Should wrap MailException`(@MockK mailException: MailException) {
-        every { sender.send(ofType(MimeMessage::class)) } throws mailException
+        every { mailException.cause } returns null
+        every { sender.send(mimeMessage) } throws mailException
         val request = MessageRequest(
             subject = "subject",
             content = "content"
