@@ -1,7 +1,6 @@
 package info.szadkowski.contact.configuration
 
 import info.szadkowski.contact.properties.MailAddressesProperties
-import info.szadkowski.contact.service.MessageService
 import info.szadkowski.contact.service.mail.MailMessageService
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
@@ -14,5 +13,5 @@ class MainConfiguration {
     fun mailMessageService(
         mailAddressesProperties: MailAddressesProperties,
         javaMailSender: JavaMailSender
-    ): MessageService = MailMessageService(mailAddressesProperties, javaMailSender)
+    ) = MailMessageService(mailAddressesProperties, javaMailSender)
 }
