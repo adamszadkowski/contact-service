@@ -9,14 +9,6 @@ plugins {
     id("org.springframework.boot") version "2.2.0.RELEASE"
 }
 
-tasks.getByName<BootJar>("bootJar") {
-    archiveFileName.set("contact-service.jar")
-}
-
-tasks.withType<KotlinCompile>().configureEach {
-    kotlinOptions.jvmTarget = "1.8"
-}
-
 repositories {
     jcenter()
 }
@@ -29,6 +21,10 @@ dependencies {
         implementation("io.strikt:strikt-core:0.21.1")
         implementation("io.mockk:mockk:1.9")
     }
+}
+
+configurations.forEach {
+    it.exclude(group = "org.assertj")
 }
 
 dependencies {
@@ -55,10 +51,14 @@ dependencies {
     testRuntimeOnly("org.junit.jupiter:junit-jupiter-engine")
 }
 
-configurations.forEach {
-    it.exclude(group = "org.assertj")
-}
-
-tasks.withType<Test>().configureEach {
-    useJUnitPlatform()
+tasks {
+    withType<KotlinCompile>().configureEach {
+        kotlinOptions.jvmTarget = "1.8"
+    }
+    getByName<BootJar>("bootJar") {
+        archiveFileName.set("contact-service.jar")
+    }
+    withType<Test>().configureEach {
+        useJUnitPlatform()
+    }
 }
