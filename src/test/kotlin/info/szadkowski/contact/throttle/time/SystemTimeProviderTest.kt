@@ -1,10 +1,11 @@
 package info.szadkowski.contact.throttle.time
 
 import kotlinx.coroutines.delay
-import kotlinx.coroutines.test.runBlockingTest
-import org.assertj.core.api.Assertions.assertThat
+import kotlinx.coroutines.runBlocking
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
+import strikt.api.expectThat
+import strikt.assertions.isIn
 
 class SystemTimeProviderTest {
     lateinit var timeProvider: TimeProvider
@@ -15,7 +16,7 @@ class SystemTimeProviderTest {
     }
 
     @Test
-    fun `Should provide system time`() = runBlockingTest {
+    fun `Should provide system time`() = runBlocking<Unit> {
         delay(20)
 
         val beforeTime = System.currentTimeMillis()
@@ -24,6 +25,6 @@ class SystemTimeProviderTest {
         delay(10)
         val afterTime = System.currentTimeMillis()
 
-        assertThat(current).isBetween(beforeTime, afterTime)
+        expectThat(current).isIn(beforeTime..afterTime)
     }
 }

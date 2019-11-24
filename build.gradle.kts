@@ -2,40 +2,41 @@ import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 import org.springframework.boot.gradle.tasks.bundling.BootJar
 
 plugins {
-    kotlin("jvm") version "1.3.50"
-    kotlin("plugin.spring") version "1.3.50"
+    val kotlinVersion = "1.3.60"
+    kotlin("jvm") version kotlinVersion
+    kotlin("plugin.spring") version kotlinVersion
     id("nebula.integtest") version "6.0.3"
     id("idea")
-    id("io.spring.dependency-management") version "1.0.8.RELEASE"
-    id("org.springframework.boot") version "2.1.6.RELEASE"
-}
-
-tasks.getByName<BootJar>("bootJar") {
-    archiveFileName.set("contact-service.jar")
-}
-
-tasks.withType<KotlinCompile>().configureEach {
-    kotlinOptions.jvmTarget = "1.8"
+    id("org.springframework.boot") version "2.2.0.RELEASE"
 }
 
 repositories {
-    mavenCentral()
+    jcenter()
 }
 
-dependencyManagement {
-    dependencies {
-        dependency("org.awaitility:awaitility:3.1.6")
-        dependency("org.assertj:assertj-core:3.12.2")
-        dependency("io.mockk:mockk:1.9")
+dependencies {
+    implementation(platform("org.springframework.boot:spring-boot-dependencies:2.2.0.RELEASE"))
+    implementation(platform("org.jetbrains.kotlinx:kotlinx-coroutines-bom:1.3.0"))
+    constraints {
+        implementation("org.awaitility:awaitility:3.1.6")
+        implementation("io.strikt:strikt-core:0.21.1")
+        implementation("io.mockk:mockk:1.9")
     }
+}
+
+configurations.forEach {
+    it.exclude(group = "org.assertj")
 }
 
 dependencies {
     implementation(kotlin("stdlib"))
     implementation(kotlin("reflect"))
-    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.3.0")
 
-    implementation("org.springframework.boot:spring-boot-starter-web")
+    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core")
+    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-reactive")
+    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-reactor")
+
+    implementation("org.springframework.boot:spring-boot-starter-webflux")
     implementation("org.springframework.boot:spring-boot-starter-mail")
     implementation("org.springframework.boot:spring-boot-starter-aop")
     implementation("org.springframework.boot:spring-boot-starter-mustache")
@@ -43,14 +44,22 @@ dependencies {
 
     testImplementation("org.junit.jupiter:junit-jupiter-api")
     testImplementation("org.springframework.boot:spring-boot-starter-test")
-    testImplementation("org.assertj:assertj-core")
+    testImplementation("io.strikt:strikt-core")
     testImplementation("io.mockk:mockk")
     testImplementation("org.awaitility:awaitility")
-    testImplementation("org.jetbrains.kotlinx:kotlinx-coroutines-test:1.3.0")
+    testImplementation("org.jetbrains.kotlinx:kotlinx-coroutines-test")
 
     testRuntimeOnly("org.junit.jupiter:junit-jupiter-engine")
 }
 
-tasks.withType<Test>().configureEach {
-    useJUnitPlatform()
+tasks {
+    withType<KotlinCompile>().configureEach {
+        kotlinOptions.jvmTarget = "1.8"
+    }
+    getByName<BootJar>("bootJar") {
+        archiveFileName.set("contact-service.jar")
+    }
+    withType<Test>().configureEach {
+        useJUnitPlatform()
+    }
 }

@@ -8,12 +8,14 @@ import io.mockk.impl.annotations.MockK
 import io.mockk.impl.annotations.RelaxedMockK
 import io.mockk.junit5.MockKExtension
 import io.mockk.verify
-import org.assertj.core.api.Assertions.assertThatThrownBy
+import kotlinx.coroutines.runBlocking
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.extension.ExtendWith
 import org.springframework.mail.MailException
 import org.springframework.mail.javamail.JavaMailSender
+import strikt.api.expectThrows
+import strikt.assertions.*
 import javax.mail.Message
 import javax.mail.internet.InternetAddress
 import javax.mail.internet.MimeMessage
@@ -39,7 +41,7 @@ class MailMessageServiceTest {
     }
 
     @Test
-    fun `Should send mail`() {
+    fun `Should send mail`() = runBlocking<Unit> {
         service.send(
             MessageRequest(
                 subject = "subject",
@@ -59,23 +61,26 @@ class MailMessageServiceTest {
 
     @Test
     fun `Should wrap MailException`(@MockK mailException: MailException) {
-        every { sender.send(ofType(MimeMessage::class)) } throws mailException
+        every { mailException.cause } returns null
+        every { sender.send(mimeMessage) } throws mailException
         val request = MessageRequest(
             subject = "subject",
             content = "content"
         )
 
-        assertThatThrownBy { service.send(request) }
-            .isExactlyInstanceOf(MessageService.MessageSendException::class.java)
-            .hasCause(mailException)
+        expectThrows<MessageService.MessageSendException> {
+            service.send(request)
+        }.cause.isEqualTo(mailException)
     }
 
     @Test
     fun `Should throw on invalid request`() {
         val request = MessageRequest()
 
-        assertThatThrownBy { service.send(request) }
-            .isExactlyInstanceOf(MessageService.MessageSendException::class.java)
-            .hasMessageContaining("Subject must not be null")
+        expectThrows<MessageService.MessageSendException> {
+            service.send(request)
+        }.message
+            .isNotNull()
+            .contains("Subject must not be null")
     }
 }

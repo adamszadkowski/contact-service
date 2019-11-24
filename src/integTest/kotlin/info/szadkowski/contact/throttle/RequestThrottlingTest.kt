@@ -2,23 +2,20 @@ package info.szadkowski.contact.throttle
 
 import info.szadkowski.contact.service.MessageService
 import org.junit.jupiter.api.Test
-import org.junit.jupiter.api.extension.ExtendWith
 import org.springframework.beans.factory.annotation.Autowired
-import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc
+import org.springframework.boot.test.autoconfigure.web.reactive.AutoConfigureWebTestClient
 import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.boot.test.mock.mockito.MockBean
+import org.springframework.http.HttpStatus
 import org.springframework.http.MediaType
+import org.springframework.http.server.reactive.ServerHttpRequest
 import org.springframework.test.context.TestPropertySource
-import org.springframework.test.context.junit.jupiter.SpringExtension
-import org.springframework.test.web.servlet.MockMvc
-import org.springframework.test.web.servlet.ResultActions
-import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post
-import org.springframework.test.web.servlet.request.RequestPostProcessor
-import org.springframework.test.web.servlet.result.MockMvcResultMatchers.status
+import org.springframework.test.web.reactive.server.WebTestClient
+import org.springframework.web.server.adapter.ForwardedHeaderTransformer
+import java.net.InetSocketAddress
 
-@ExtendWith(SpringExtension::class)
 @SpringBootTest
-@AutoConfigureMockMvc
+@AutoConfigureWebTestClient
 @TestPropertySource(
     properties = [
         "throttling.ip.limit=1",
@@ -30,37 +27,39 @@ import org.springframework.test.web.servlet.result.MockMvcResultMatchers.status
 class RequestThrottlingTest {
 
     @Autowired
-    lateinit var mvc: MockMvc
+    lateinit var client: WebTestClient
 
     @MockBean
-    lateinit var messageService: MessageService
+    lateinit var mailMessageService: MessageService
 
     @Test
     fun `Should throttle requests`() {
-        requestFromIp("10.0.0.1").andExpect(status().isOk())
-        requestFromIp("10.0.0.1").andExpect(status().isTooManyRequests())
-        requestFromIp("10.0.0.2").andExpect(status().isOk())
-        requestFromIp("10.0.0.3").andExpect(status().isTooManyRequests())
+        requestFromIp("10.0.0.1").expectStatus().isOk
+        requestFromIp("10.0.0.1").expectStatus().isEqualTo(HttpStatus.TOO_MANY_REQUESTS)
+        requestFromIp("10.0.0.2").expectStatus().isOk
+        requestFromIp("10.0.0.3").expectStatus().isEqualTo(HttpStatus.TOO_MANY_REQUESTS)
     }
 
-    private fun requestFromIp(address: String): ResultActions {
-        return mvc.perform(
-            post("/v1/message")
-                .with(remoteAddr(address))
-                .contentType(MediaType.APPLICATION_JSON_UTF8)
-                .content(
-                    """
-                        {
-                           "subject": "subject",
-                           "content": "content"
-                        }
-                    """.trimIndent()
-                )
-        )
-    }
+    private fun requestFromIp(address: String) = client
+        .remoteAddr(address)
+        .post()
+        .uri("/v1/message")
+        .attribute("Host", address)
+        .contentType(MediaType.APPLICATION_JSON)
+        .bodyValue(
+            """
+                {
+                   "subject": "subject",
+                   "content": "content"
+                }
+            """.trimIndent()
+        ).exchange()
 
-    private fun remoteAddr(remoteAddr: String) = RequestPostProcessor {
-        it.remoteAddr = remoteAddr
-        it
+    private fun WebTestClient.remoteAddr(address: String) = mutateWith { _, httpHandlerBuilder, _ ->
+        httpHandlerBuilder?.forwardedHeaderTransformer(object : ForwardedHeaderTransformer() {
+            override fun apply(request: ServerHttpRequest) = object : ServerHttpRequest by request {
+                override fun getRemoteAddress() = InetSocketAddress(address, 80)
+            }
+        })
     }
 }

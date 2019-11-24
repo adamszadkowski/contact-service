@@ -3,51 +3,56 @@ package info.szadkowski.contact.controller
 import info.szadkowski.contact.controller.exception.ExceptionHandlerController
 import info.szadkowski.contact.model.MessageRequest
 import info.szadkowski.contact.service.MessageService
-import org.assertj.core.api.Assertions.assertThat
+import info.szadkowski.contact.throttle.Throttler
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.springframework.http.MediaType
-import org.springframework.test.web.servlet.MockMvc
-import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post
-import org.springframework.test.web.servlet.result.MockMvcResultMatchers.status
-import org.springframework.test.web.servlet.setup.MockMvcBuilders
+import org.springframework.test.web.reactive.server.WebTestClient
+import strikt.api.expectThat
+import strikt.assertions.containsExactly
 
 class MessageControllerTest : MessageService {
     lateinit var messageService: (MessageRequest) -> Unit
-    lateinit var messages: MutableList<MessageRequest>
-    lateinit var mvc: MockMvc
+    lateinit var client: WebTestClient
 
-    override fun send(message: MessageRequest) = messageService(message)
+    override suspend fun send(message: MessageRequest) = messageService(message)
 
     @BeforeEach
     fun setUp() {
-        messages = mutableListOf()
-        val messageController = MessageController(this) {
+        val dummyThrottler = object : Throttler {
+            override fun canProcess(key: String) = true
+            override fun clearExpired() = Unit
+        }
+        val messageController = MessageController(this, dummyThrottler, dummyThrottler) {
             "templated:" + this["content"]
         }
-        mvc = MockMvcBuilders.standaloneSetup(messageController)
-            .setControllerAdvice(ExceptionHandlerController())
+        client = WebTestClient
+            .bindToController(messageController)
+            .controllerAdvice(ExceptionHandlerController())
+            .webFilter<WebTestClient.ControllerSpec>(IpReadingFilter())
             .build()
     }
 
     @Test
     fun `Should send correct mail request`() {
+        val messages = mutableListOf<MessageRequest>()
         messageService = { messages.add(it) }
 
-        mvc.perform(
-            post("/v1/message")
-                .contentType(MediaType.APPLICATION_JSON_UTF8)
-                .content(
-                    """
-                        {
-                            "subject": "mySubject",
-                            "content": "myContent"
-                        }
-                    """.trimIndent()
-                )
-        ).andExpect(status().isOk())
+        client.post()
+            .uri("/v1/message")
+            .contentType(MediaType.APPLICATION_JSON)
+            .bodyValue(
+                """
+                    {
+                        "subject": "mySubject",
+                        "content": "myContent"
+                    }
+                """.trimIndent()
+            )
+            .exchange()
+            .expectStatus().isOk
 
-        assertThat(messages).containsExactly(
+        expectThat(messages).containsExactly(
             MessageRequest(
                 subject = "mySubject",
                 content = "templated:myContent"
@@ -59,10 +64,11 @@ class MessageControllerTest : MessageService {
     fun `Should fail on incorrect mail request`() {
         messageService = { throw MessageService.MessageSendException() }
 
-        mvc.perform(
-            post("/v1/message")
-                .contentType(MediaType.APPLICATION_JSON_UTF8)
-                .content("{}")
-        ).andExpect(status().isBadRequest())
+        client.post()
+            .uri("/v1/message")
+            .contentType(MediaType.APPLICATION_JSON)
+            .bodyValue("{}")
+            .exchange()
+            .expectStatus().isBadRequest
     }
 }
