@@ -1,18 +1,18 @@
 package info.szadkowski.contact.properties
 
 import org.springframework.boot.context.properties.ConfigurationProperties
-import org.springframework.context.annotation.Configuration
+import org.springframework.boot.context.properties.ConstructorBinding
 import java.time.Duration
 
-@Configuration
+@ConstructorBinding
 @ConfigurationProperties(prefix = "throttling")
-class ThrottlingProperties {
-    lateinit var clearExpiredRate: Duration
-    var ip: ThrottlingScope? = null
-    var all: ThrottlingScope? = null
-
-    class ThrottlingScope {
-        var limit: Long = 0
-        lateinit var window: Duration
-    }
+data class ThrottlingProperties(
+    val clearExpiredRate: Duration,
+    var ip: ThrottlingScope,
+    var all: ThrottlingScope
+) {
+    data class ThrottlingScope(
+        val limit: Long,
+        val window: Duration
+    )
 }

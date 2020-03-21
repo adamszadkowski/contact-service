@@ -1,11 +1,11 @@
 package info.szadkowski.contact.properties
 
 import org.springframework.boot.context.properties.ConfigurationProperties
-import org.springframework.context.annotation.Configuration
+import org.springframework.boot.context.properties.ConstructorBinding
 
-@Configuration
+@ConstructorBinding
 @ConfigurationProperties(prefix = "mail")
-class MailAddressesProperties {
-    lateinit var recipientMail: String
-    lateinit var senderMail: String
-}
+data class MailAddressesProperties(
+    val recipientMail: String,
+    val senderMail: String
+)

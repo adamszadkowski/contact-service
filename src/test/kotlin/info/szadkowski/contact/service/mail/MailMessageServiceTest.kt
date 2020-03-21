@@ -32,10 +32,10 @@ class MailMessageServiceTest {
 
     @BeforeEach
     fun setUp() {
-        val mailAddressesProperties = MailAddressesProperties().apply {
-            senderMail = "sender@address.com"
+        val mailAddressesProperties = MailAddressesProperties(
+            senderMail = "sender@address.com",
             recipientMail = "recipient@address.com"
-        }
+        )
         every { sender.createMimeMessage() } returns mimeMessage
         service = MailMessageService(mailAddressesProperties, sender)
     }

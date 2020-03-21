@@ -1,11 +1,11 @@
 package info.szadkowski.contact.properties
 
 import org.springframework.boot.context.properties.ConfigurationProperties
-import org.springframework.context.annotation.Configuration
+import org.springframework.boot.context.properties.ConstructorBinding
 import org.springframework.core.io.Resource
 
-@Configuration
+@ConstructorBinding
 @ConfigurationProperties(prefix = "template")
-class TemplateProperties {
-    lateinit var resource: Resource
-}
+data class TemplateProperties(
+    val resource: Resource
+)

@@ -9,7 +9,6 @@ import org.springframework.test.context.TestPropertySource
 import org.springframework.test.context.junit.jupiter.SpringExtension
 import strikt.api.expectThat
 import strikt.assertions.isEqualTo
-import strikt.assertions.isNotNull
 import java.time.Duration
 
 @ExtendWith(SpringExtension::class)
@@ -31,13 +30,11 @@ class ThrottlingPropertiesTest {
         expectThat(p) {
             get { clearExpiredRate }.isEqualTo(Duration.ofSeconds(5))
             get { ip }
-                .isNotNull()
                 .and {
                     get { limit }.isEqualTo(1)
                     get { window }.isEqualTo(Duration.ofSeconds(5))
                 }
             get { all }
-                .isNotNull()
                 .and {
                     get { limit }.isEqualTo(2)
                     get { window }.isEqualTo(Duration.ofSeconds(10))
