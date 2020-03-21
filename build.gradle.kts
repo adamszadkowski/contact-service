@@ -7,7 +7,7 @@ plugins {
     kotlin("plugin.spring") version kotlinVersion
     id("nebula.integtest") version "6.0.3"
     id("idea")
-    id("org.springframework.boot") version "2.2.0.RELEASE"
+    id("org.springframework.boot") version "2.2.4.RELEASE"
 }
 
 repositories {
@@ -15,7 +15,7 @@ repositories {
 }
 
 dependencies {
-    implementation(platform("org.springframework.boot:spring-boot-dependencies:2.2.0.RELEASE"))
+    implementation(platform("org.springframework.boot:spring-boot-dependencies:2.2.4.RELEASE"))
     implementation(platform("org.jetbrains.kotlinx:kotlinx-coroutines-bom:1.3.0"))
     constraints {
         implementation("org.awaitility:awaitility:3.1.6")
