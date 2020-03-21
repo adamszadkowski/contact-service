@@ -24,10 +24,10 @@ class ThrottlerConfiguration {
     fun throttlerFactory(timeProvider: TimeProvider) = ThrottlerFactory(timeProvider)
 
     @Bean
-    fun ipThrottler(throttlerFactory: ThrottlerFactory) = createThrottler(throttlerFactory, properties.ip!!)
+    fun ipThrottler(throttlerFactory: ThrottlerFactory) = createThrottler(throttlerFactory, properties.ip)
 
     @Bean
-    fun allThrottler(throttlerFactory: ThrottlerFactory) = createThrottler(throttlerFactory, properties.all!!)
+    fun allThrottler(throttlerFactory: ThrottlerFactory) = createThrottler(throttlerFactory, properties.all)
 
     @Bean(initMethod = "run")
     fun clearer(taskScheduler: TaskScheduler, throttlers: List<Throttler>) = Runnable {

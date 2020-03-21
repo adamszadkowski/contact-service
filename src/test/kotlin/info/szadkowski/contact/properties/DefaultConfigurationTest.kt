@@ -14,7 +14,10 @@ import org.springframework.core.io.ClassPathResource
 import org.springframework.test.context.ContextConfiguration
 import org.springframework.test.context.junit.jupiter.SpringExtension
 import strikt.api.expectThat
-import strikt.assertions.*
+import strikt.assertions.hasEntry
+import strikt.assertions.hasSize
+import strikt.assertions.isEmpty
+import strikt.assertions.isEqualTo
 import java.time.Duration
 
 @ExtendWith(SpringExtension::class)
@@ -40,13 +43,11 @@ class DefaultConfigurationTest {
         expectThat(p) {
             get { clearExpiredRate }.isEqualTo(Duration.ofHours(24))
             get { ip }
-                .isNotNull()
                 .and {
                     get { limit }.isEqualTo(5)
                     get { window }.isEqualTo(Duration.ofHours(24))
                 }
             get { all }
-                .isNotNull()
                 .and {
                     get { limit }.isEqualTo(15)
                     get { window }.isEqualTo(Duration.ofHours(24))
