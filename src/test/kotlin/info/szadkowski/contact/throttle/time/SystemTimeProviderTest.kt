@@ -17,8 +17,6 @@ class SystemTimeProviderTest {
 
     @Test
     fun `Should provide system time`() = runBlocking<Unit> {
-        delay(20)
-
         val beforeTime = System.currentTimeMillis()
         delay(10)
         val current = timeProvider.currentMillis
