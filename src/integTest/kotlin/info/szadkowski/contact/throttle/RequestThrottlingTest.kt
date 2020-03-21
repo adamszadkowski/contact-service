@@ -44,7 +44,6 @@ class RequestThrottlingTest {
         .remoteAddr(address)
         .post()
         .uri("/v1/message")
-        .attribute("Host", address)
         .contentType(MediaType.APPLICATION_JSON)
         .bodyValue(
             """
