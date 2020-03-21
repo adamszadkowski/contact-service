@@ -1,14 +1,17 @@
-FROM openjdk:11 as build
+ARG JAVA_IMAGE=openjdk:13
+
+FROM ${JAVA_IMAGE} as build
 
 WORKDIR /src
 
 COPY ./ /src
 
-RUN ./gradlew clean build
+RUN yum -y install unzip
 
-RUN unzip build/libs/contact-service.jar -d /app
+RUN ./gradlew clean build && \
+    unzip build/libs/contact-service.jar -d /app
 
-FROM openjdk:11
+FROM ${JAVA_IMAGE}
 
 COPY --from=build /app/BOOT-INF/lib /app/lib
 COPY --from=build /app/BOOT-INF/classes /app

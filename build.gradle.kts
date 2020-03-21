@@ -52,7 +52,7 @@ dependencies {
 
 tasks {
     withType<KotlinCompile> {
-        kotlinOptions.jvmTarget = "11"
+        kotlinOptions.jvmTarget = "13"
     }
     getByName<BootJar>("bootJar") {
         archiveFileName.set("contact-service.jar")
