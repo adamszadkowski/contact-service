@@ -16,7 +16,6 @@ repositories {
 
 dependencies {
     implementation(platform("org.springframework.boot:spring-boot-dependencies:2.2.4.RELEASE"))
-    implementation(platform("org.jetbrains.kotlinx:kotlinx-coroutines-bom:1.3.0"))
     constraints {
         implementation("org.awaitility:awaitility:3.1.6")
         implementation("io.strikt:strikt-core:0.21.1")
@@ -33,7 +32,6 @@ dependencies {
     implementation(kotlin("reflect"))
 
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core")
-    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-reactive")
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-reactor")
 
     implementation("org.springframework.boot:spring-boot-starter-webflux")
@@ -53,13 +51,13 @@ dependencies {
 }
 
 tasks {
-    withType<KotlinCompile>().configureEach {
+    withType<KotlinCompile> {
         kotlinOptions.jvmTarget = "1.8"
     }
     getByName<BootJar>("bootJar") {
         archiveFileName.set("contact-service.jar")
     }
-    withType<Test>().configureEach {
+    withType<Test> {
         useJUnitPlatform()
     }
 }
